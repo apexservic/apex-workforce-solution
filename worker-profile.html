@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Profile - APEX Manpower</title>
+    
+    <style>
+        /* =====================================
+           १. CSS - प्रोफाईल आणि लॉगिन डिझाईन
+        ====================================== */
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* कार्ड डिझाईन */
+        .card {
+            background-color: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-top: 6px solid #0b2545;
+        }
+
+        .header-title {
+            text-align: center;
+            color: #0b2545;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        /* इनपुट फील्ड्स */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fcfcfc;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+        }
+
+        /* बटन्स */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn:hover { background-color: #e65c00; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* प्रोफाईल UI डिझाईन */
+        #profileSection {
+            display: none; /* सुरुवातीला लपवलेले */
+            max-width: 600px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff6600;
+        }
+        .profile-info h3 { color: #0b2545; margin-bottom: 5px; font-size: 22px; }
+        .profile-info p { color: #666; font-size: 14px; }
+
+        /* प्रोफाईल ग्रिड (माहिती दाखवण्यासाठी) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .info-box span { display: block; font-size: 12px; color: #888; margin-bottom: 3px; }
+        .info-box strong { color: #0b2545; font-size: 15px; }
+
+        /* डॉक्युमेंट्स सेक्शन */
+        .docs-section {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #4caf50;
+        }
+        .docs-section strong { color: #2e7d32; }
+
+        @media (max-width: 500px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- १. लॉगिन आणि OTP सेक्शन -->
+    <div class="card" id="loginSection">
+        <h2 class="header-title">Worker Profile Login</h2>
+        <p style="text-align: center; color: #666; font-size: 14px; margin-bottom: 20px;">Enter your Aadhaar number and registered mobile number.</p>
+        
+        <div class="form-group">
+            <label>Aadhaar Number</label>
+            <input type="text" id="aadhaarInput" maxlength="12" placeholder="12 Digit Number" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Registered Mobile Number</label>
+            <input type="tel" id="mobileInput" maxlength="10" placeholder="10 Digit Mobile Number" required>
+        </div>
+
+        <!-- Invisible reCAPTCHA साठी कंटेनर -->
+        <div id="recaptcha-container"></div>
+
+        <button class="btn" id="sendOtpBtn">Send OTP</button>
+
+        <!-- OTP टाकण्याचा बॉक्स (सुरुवातीला लपवलेला) -->
+        <div id="otpBox" style="display: none; margin-top: 25px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <div class="form-group">
+                <label>Enter OTP</label>
+                <input type="text" id="otpInput" maxlength="6" placeholder="6 Digit OTP">
+            </div>
+            <button class="btn" id="verifyOtpBtn" style="background-color: #0b2545;">Verify & Login</button>
+        </div>
+    </div>
+
+    <!-- २. प्रोफाईल दाखवणारा सेक्शन (लॉगिन झाल्यावर दिसेल) -->
+    <div class="card" id="profileSection">
+        <div class="profile-header">
+            <img id="profPhoto" class="profile-photo" src="https://via.placeholder.com/100" alt="Profile">
+            <div class="profile-info">
+                <h3 id="profName">Loading...</h3>
+                <p id="profRole" style="font-weight: bold; color: #ff6600;">Role</p>
+                <p id="profStatus" style="color: green; font-weight: bold;">Status: Pending</p>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box">
+                <span>Mobile Number</span>
+                <strong id="profMobile">-</strong>
+            </div>
+            <div class="info-box">
+                <span>Aadhaar Number</span>
+                <strong id="profAadhaar">-</strong>
+            </div>
+            <div class="info-box">
+                <span>Age / DOB</span>
+                <strong id="profAge">-</strong>
+            </div>
+            <div class="info-box">
+                <span>Work / Education</span>
+                <strong id="profWork">-</strong>
+            </div>
+            <div class="info-box">
+                <span>Village & District</span>
+                <strong id="profLocation">-</strong>
+            </div>
+            <div class="info-box">
+                <span>UTR Number</span>
+                <strong id="profUtr">-</strong>
+            </div>
+        </div>
+
+        <div class="docs-section">
+            <strong>Attached Documents:</strong>
+            <p id="profDocs" style="font-size: 14px; margin-top: 5px; color: #444; line-height: 1.6;"></p>
+        </div>
+        
+        <button class="btn" style="margin-top: 20px; background-color: #d32f2f;" onclick="location.reload()">Logout</button>
+    </div>
+
+    <!-- =====================================
+         ३. Firebase v9 Modular JavaScript 
+    ====================================== -->
+    <script type="module">
+        // Firebase मॉड्यूल्स इम्पोर्ट करणे
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // तुमची Firebase Config इथे टाका
+        const firebaseConfig = {
+  apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
+  authDomain: "apex-245ed.firebaseapp.com",
+  projectId: "apex-245ed",
+  storageBucket: "apex-245ed.firebasestorage.app",
+  messagingSenderId: "1082704594683",
+  appId: "1:1082704594683:web:5c1c67afeb0eadfb68d25e"
+};
+
+        // Firebase सुरु करणे
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        auth.useDeviceLanguage(); // OTP च्या मेसेजची भाषा
+
+        let fetchedUserData = null; // युजरचा डेटा साठवण्यासाठी
+
+        // १. Invisible reCAPTCHA सेटअप करणे
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible'
+        });
+
+        // २. Send OTP फंक्शन
+        document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+            const aadhaar = document.getElementById('aadhaarInput').value;
+            const mobile = document.getElementById('mobileInput').value;
+            const sendBtn = document.getElementById('sendOtpBtn');
+
+            if (aadhaar.length !== 12 || mobile.length !== 10) {
+                alert("Please enter a valid 12-digit Aadhaar number and 10-digit mobile number.");
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.innerText = "Checking Record...";
+
+            try {
+                // Firestore मध्ये युजर शोधणे (workers कलेक्शनमधून)
+                const workersRef = collection(db, "workers");
+                const q = query(workersRef, where("aadhaarNumber", "==", aadhaar), where("mobileNumber", "==", mobile));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("❌No record found for this Aadhaar and mobile number! Please check your information");
+                    sendBtn.disabled = false;
+                    sendBtn.innerText = "Send OTP";
+                    return;
+                }
+
+                // रेकॉर्ड सापडल्यास डेटा साठवून ठेवणे
+                fetchedUserData = querySnapshot.docs[0].data();
+
+                // OTP पाठवणे
+                sendBtn.innerText = "Sending OTP...";
+                const phoneNumber = "+91" + mobile;
+                const appVerifier = window.recaptchaVerifier;
+
+                signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                    .then((confirmationResult) => {
+                        window.confirmationResult = confirmationResult;
+                        alert("✅An OTP has been sent to your mobile number.");
+                        
+                        // OTP चा बॉक्स दाखवणे
+                        document.getElementById('otpBox').style.display = "block";
+                        sendBtn.style.display = "none"; // Send बटण लपवणे
+                        
+                        // सिक्युरिटीसाठी आधार आणि मोबाईल फील्ड लॉक करणे
+                        document.getElementById('aadhaarInput').disabled = true;
+                        document.getElementById('mobileInput').disabled = true;
+                    })
+                    .catch((error) => {
+                        console.error("OTP Error:", error);
+                        alert("❌ Please refresh the page and try again.");
+                        sendBtn.disabled = false;
+                        sendBtn.innerText = "Send OTP";
+                    });
+
+            } catch (error) {
+                console.error("DB Error:", error);
+                alert("Try Again.");
+                sendBtn.disabled = false;
+                sendBtn.innerText = "Send OTP";
+            }
+        });
+
+        // ३. Verify OTP फंक्शन
+        document.getElementById('verifyOtpBtn').addEventListener('click', () => {
+            const otp = document.getElementById('otpInput').value;
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+
+            if (otp.length !== 6) {
+                alert("Please enter the 6-digit OTP.");
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.innerText = "Verifying...";
+
+            window.confirmationResult.confirm(otp).then((result) => {
+                // OTP यशस्वीरीत्या व्हेरिफाय झाला!
+                showProfilePage();
+            }).catch((error) => {
+                alert("❌Invalid OTP! Please try again.");
+                verifyBtn.disabled = false;
+                verifyBtn.innerText = "Verify & Login";
+            });
+        });
+
+        // ४. डेटा मॅप करून Profile View दाखवणे
+        function showProfilePage() {
+            // लॉगिन बॉक्स लपवणे आणि प्रोफाईल बॉक्स दाखवणे
+            document.getElementById('loginSection').style.display = "none";
+            document.getElementById('profileSection').style.display = "block";
+
+            let data = fetchedUserData;
+
+            // सुरक्षिततेसाठी आधार नंबरचे शेवटचे ४ अंकच दाखवणे
+            let maskedAadhaar = "XXXX-XXXX-" + data.aadhaarNumber.slice(-4);
+
+            // डेटा HTML मध्ये भरणे
+            document.getElementById('profPhoto').src = data.profilePhoto || "https://via.placeholder.com/100";
+            document.getElementById('profName').innerText = data.fullName || "N/A";
+            document.getElementById('profRole').innerText = data.userRole || data.ageCategory;
+            document.getElementById('profStatus').innerText = "Status: " + (data.status || "Pending");
+            
+            document.getElementById('profMobile').innerText = "+91 " + data.mobileNumber;
+            document.getElementById('profAadhaar').innerText = maskedAadhaar; // सुरक्षित आधार
+            document.getElementById('profAge').innerText = (data.age || "") + " (" + (data.dob || "") + ")";
+            document.getElementById('profWork').innerText = data.workType || data.standard || "N/A";
+            document.getElementById('profLocation').innerText = (data.village || "") + ", " + (data.district || "");
+            document.getElementById('profUtr').innerText = data.utrNumber || "N/A";
+
+            // डॉक्युमेंट्स तपासणे
+            let docsHtml = "";
+            if(data.hasAadhaarDoc) docsHtml += "✅ Aadhaar Card<br>";
+            if(data.hasConsentDoc) docsHtml += "✅ Parental Consent Form<br>";
+            if(data.hasLicenseDoc) docsHtml += "✅ License/Certificate<br>";
+            
+            if(docsHtml === "") {
+                docsHtml = "❌No document attached.";
+            }
+            document.getElementById('profDocs').innerHTML = docsHtml;
+        }
+    </script>
+</body>
+</html>
