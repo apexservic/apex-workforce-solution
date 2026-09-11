@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX Man Power Service - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase App & Firestore CDN v10.8.0 -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Google Translate Widget Container -->
+<div id="google_translate_element"></div>
+
+    <!-- हेडर सेक्शन (Logo, Name, Motto आणि Menu) -->
+    <header class="header">
+        <div class="logo-container">
+            <!-- लोगोची इमेज -->
+            <img src="Apex.logo.png" alt="Apex Logo" class="logo">
+            
+            <!-- कंपनीचे नाव आणि मोटो -->
+            <div class="company-info">
+                <h1>APEX MAN POWER SERVICE</h1>
+                <p class="motto">PEOPLE. POWER. PROGRESS.</p>
+            </div>
+        </div>
+
+        <!-- नेव्हिगेशन मेन्यू -->
+        <nav class="navbar">
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="worker-apply.html" target="_blank">Worker Apply</a></li>
+                <li><a href="#" target="_blank">Client Apply</a></li>
+                <li><a href="#" target="_blank">Worker Profile</a></li>
+                <li><a href="#" target="_blank">Online Exam Trainer</a></li>
+                <li><a href="admin-login.html" target="_blank">Admin Login</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+    <!-- मुख्य भाग -->
+   <!-- मुख्य भाग (Image Slider) -->
+    <main class="main-content">
+        <div class="slider">
+            <figure>
+                <img src="img1.png" alt="Slide 1">
+                <img src="img3.png" alt="Slide 2">
+                <img src="img5.png" alt="Slide 3">
+                <img src="img4.png" alt="Slide 5"> 
+                <img src="img1.png" alt="Slide 1"> <!-- लूप पूर्ण करण्यासाठी पहिली इमेज पुन्हा टाकली आहे -->
+            </figure>
+        </div>
+    </main>
+    <!-- १. आमच्याबद्दल (About Us) -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">ABOUT US</h2>
+            <h3 class="motto-text">"People. Power. Progress."</h3>
+            <p>We provide the best manpower solutions across various sectors, including manufacturing, construction, healthcare, hospitality, and logistics. Providing the right workforce according to our clients’ specific requirements is what defines us.</p>
+            <p><strong>Head Office:</strong> Shirur, Pune, Maharashtra - 412210</p>
+        </div>
+    </section>
+
+    <!-- २. पत्ता आणि गूगल मॅप (Address & Map) -->
+    <section class="map-section">
+        <div class="container flex-container">
+            <div class="address-box">
+                <h2 class="section-title" style="color: white;">Our Address</h2>
+                <p><strong>APEX Man Power Service</strong></p>
+                <p>Shirur, Pune,<br>Maharashtra - 412210</p>
+                <p>📞 9075283108 / 8999974287</p>
+                <p>✉️ support@apexworkforcesolution.in</p>
+            </div>
+            <div class="map-box">
+                <!-- शिरूर, पुणे चा गुगल मॅप -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120974.7709540051!2d74.2987163!3d18.8286208!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc326c596e38bbd%3A0x6eef67664c7e6c43!2sShirur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1690000000000!5m2!1sen!2sin" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ३. महत्त्वाच्या सेवा (Our Services) -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">OUR SERVICES</h2>
+            <div class="cards-container">
+                <div class="service-card">
+                    <h3>**Skilled, Semi-Skilled, and Unskilled Workers**</h3>
+                    <p>We provide all types of suitable and experienced workers required for your industry or factory.</p>
+                </div>
+                <div class="service-card">
+                    <h3>**Technical and Online Exam Assistants**</h3>
+                    <p>Reliable staff for technical tasks and the smooth, accurate management of online examinations.</p>
+                </div>
+                <div class="service-card">
+                    <h3>**Domestic Helpers and Office Staff**</h3>
+                    <p>Get verified staff for domestic assistance or the day-to-day operations of your office.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ४. वैशिष्ट्ये (Why Choose Us?) -->
+    <section class="why-us-section">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Why Choose Us?</h2>
+            <ul class="features-list">
+                <li>✔️ 100% Reliable and Verified Workers</li>
+                <li>✔️ Fast Service and Quick Response</li>
+                <li>✔️ Transparent and Affordable Rates</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ५. त्वरित संपर्क (Quick Contact) -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Quick Contact</h2>
+            <p>If you need workers or would like to register for work, contact us today.:</p>
+            <div class="contact-numbers">
+                <p>📞 <strong>9075283108</strong> | <strong>8999974287</strong></p>
+            </div>
+            <!-- WhatsApp बटन -->
+            <a href="https://wa.me/918999974287" target="_blank" class="whatsapp-btn">💬 WhatsApp Message</a>
+        </div>
+    </section>
+
+    <!-- ६. फूटर (Footer) -->
+    <footer class="footer">
+        <p>&copy; 2026 APEX Man Power Service. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a>
+        </div>
+    </footer>
+    <!-- Google Translate Script -->
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en', /* तुमच्या वेबसाईटची मूळ भाषा इंग्रजी आहे */
+            includedLanguages: 'mr,hi,en', /* फक्त मराठी, हिंदी आणि इंग्रजीचे पर्याय दाखवण्यासाठी. (सर्व भाषा हव्या असल्यास ही ओळ काढून टाका) */
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

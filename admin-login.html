@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - APEX Man Power</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Firebase App & Firestore CDN v10.8.0 -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="login-body">
+
+    <div class="login-box">
+        <!-- लोगो किंवा टायटल -->
+        <h2 class="login-title">APEX <span>ADMIN</span></h2>
+        <p class="login-subtitle">Please log in to access the dashboard.</p>
+
+        <!-- लॉगिन फॉर्म -->
+        <div class="input-group">
+            <label for="email">Email Id:</label>
+            <input type="email" id="email" placeholder="" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="" required>
+        </div>
+
+        <p id="error-msg" class="error-msg">Incorrect email or password!</p>
+
+        <button onclick="checkLogin()" class="login-btn">Login</button>
+    </div>
+
+    <!-- लॉगिन चेक करणारी JavaScript -->
+    <script>
+        function checkLogin() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let errorMsg = document.getElementById("error-msg");
+
+            // फिक्स व्हॅल्यूज तपासून पाहणे
+            if(email === "admin@apex.com" && password === "12345") {
+                errorMsg.style.display = "none";
+                // लॉगिन यशस्वी झाल्यावर डॅशबोर्ड पेजवर जा
+                window.location.href = "admin-dashboard.html"; 
+            } else {
+                // चुकीचा पासवर्ड असल्यास एरर मेसेज दाखवा
+                errorMsg.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>

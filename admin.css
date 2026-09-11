@@ -1,0 +1,206 @@
+/* बेसिक सेटिंग्ज */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================================
+   १. लॉगिन पेजची स्टाईल (Login Page)
+========================================== */
+.login-body {
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 350px;
+    border-top: 5px solid #ff6600; /* केशरी हायलाईट */
+}
+
+.login-title {
+    color: #0b2545; /* निळा रंग */
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+.login-title span { color: #ff6600; }
+
+.login-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #0b2545;
+    font-weight: bold;
+}
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #0b2545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.login-btn:hover { background-color: #ff6600; }
+
+.error-msg {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 15px;
+    display: none;
+    text-align: center;
+}
+
+/* =========================================
+   २. डॅशबोर्ड पेजची स्टाईल (Dashboard Layout)
+========================================== */
+.dashboard-body {
+    display: flex;
+    background-color: #f4f6f9;
+    height: 100vh;
+}
+
+/* साइडबार (Sidebar) */
+.sidebar {
+    width: 250px;
+    background-color: #0b2545;
+    color: white;
+    padding-top: 20px;
+    position: fixed;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+.sidebar-logo span { color: #ff6600; }
+
+.sidebar-menu { list-style: none; }
+
+.dropdown-btn, .menu-link {
+    width: 100%;
+    padding: 15px 20px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: 0.3s;
+}
+.dropdown-btn:hover, .menu-link:hover {
+    background-color: #163a69;
+    border-left: 5px solid #ff6600;
+}
+
+/* ड्रॉपडाऊन मेनूची स्टाईल */
+.dropdown-container {
+    display: none;
+    background-color: #081b33;
+    list-style: none;
+}
+.dropdown-container a {
+    color: #cbd5e1;
+    padding: 12px 20px 12px 40px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+.dropdown-container a:hover { color: #ff6600; }
+
+/* लॉगआउट बटन */
+.logout-btn {
+    margin-top: auto;
+    padding: 15px;
+    background-color: #ff6600;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+}
+.logout-btn:hover { background-color: #e65c00; }
+
+/* मुख्य कंटेंट एरिया (Main Content) */
+.main-content {
+    margin-left: 250px; /* साइडबारची रुंदी सोडून */
+    width: calc(100% - 250px);
+}
+
+.dashboard-header {
+    background-color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.dashboard-header h2 { color: #0b2545; }
+
+.content-area {
+    padding: 30px;
+}
+/* एक्सपांड होणाऱ्या रो ची स्टाईल */
+        .details-row {
+            display: none;
+            background-color: #fdfdfd;
+        }
+        .details-container {
+            padding: 20px;
+            border-left: 4px solid #ff6600;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 14px;
+            color: #0b2545;
+        }
+        .details-container img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .view-btn {
+            background-color: #0b2545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .view-btn:hover { background-color: #133863; }

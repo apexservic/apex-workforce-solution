@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Worker Apply Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase App & Firestore CDN v10.8.0 -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <style>
+        /* =====================================
+           १. बेसिक आणि फॉर्म लेआउट स्टाईल (CSS)
+        ====================================== */
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: white;
+            width: 100%;
+            max-width: 700px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-top: 6px solid #ff6600; 
+            margin: 0 auto; /* ही एक लाईन फॉर्मला डावीकडून आणि उजवीकडून बरोबर मध्यभागी आणेल */
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #0b2545; /* निळा रंग */
+            margin: 0 0 10px 0;
+        }
+
+        /* फोटो अपलोड डिझाईन */
+        .photo-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px dashed #0b2545;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #fcfcfc;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none; /* जेव्हा फोटो निवडला जाईल तेव्हाच दिसेल */
+        }
+
+        .photo-preview span {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #photoInput {
+            display: none; /* मूळ इनपुट लपवले आहे */
+        }
+
+        /* फॉर्म फील्ड्सची रचना (२ कॉलम्स) */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            color: #0b2545;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fcfcfc;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+            background-color: white;
+        }
+
+        /* Read Only फील्ड्ससाठी वेगळा रंग */
+        .readonly-field {
+            background-color: #e9ecef !important;
+            color: #495057;
+            cursor: not-allowed;
+        }
+
+        /* मोबाईल रिस्पॉन्सिव्ह */
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+        /* =====================================
+           उजव्या बाजूच्या (Skill & Employment) सेक्शनचे नवीन डिझाईन
+        ====================================== */
+        
+        /* १. मुख्य बॉक्सचा हिरवा रंग काढून पांढरा/फिका ग्रे करणे */
+       /* १. मुख्य बॉक्सचा हिरवा रंग काढून पांढरा करणे आणि 100% Width देणे */
+        #sectionAdult {
+            background-color: #ffffff !important; 
+            border: 1px solid #ccc !important; 
+            border-radius: 8px !important;
+            width: 100% !important;
+            grid-column: 1 / -1 !important; /* पूर्ण रुंदीसाठी */
+            box-sizing: border-box;
+            padding: 25px !important;
+            margin-top: 25px !important;
+        }
+
+        /* २. मुख्य हेडिंगचा निळा रंग आणि आकर्षक केशरी अंडरलाईन */
+        #sectionAdult h3 {
+            color: #0b2545 !important;
+            border-bottom: 2px solid #ff6600;
+            padding-bottom: 8px;
+            margin-bottom: 20px !important;
+        }
+
+        /* ३. Student आणि Worker च्या आतल्या बॉक्सेसची स्टाईल */
+        #subSectionStudent, #subSectionWorker {
+            background-color: #ffffff !important; /* पांढरा रंग */
+            border: 1px solid #0b2545 !important; /* थीमची निळी सॉलिड बॉर्डर */
+            border-radius: 8px !important; /* गोलाकार कोपरे */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* आकर्षक शॅडो (Box-shadow) */
+            padding: 20px !important;
+            margin-top: 15px !important;
+        }
+
+        /* ४. आतल्या हेडिंग्जचा निळा रंग */
+        #subSectionStudent h4, #subSectionWorker h4 {
+            color: #0b2545 !important;
+            font-size: 16px !important;
+            margin-bottom: 15px !important;
+        }
+        /* =====================================
+           सबमिट बटन आणि QR Modal डिझाईन 
+        ====================================== */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff6600; /* आकर्षक केशरी रंग */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+        .submit-btn:hover { background-color: #e65c00; }
+
+        .modal-overlay {
+            display: none; /* सुरुवातीला लपवलेले */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* डार्क ब्लर ओव्हरले */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-top: 5px solid #0b2545;
+        }
+        
+        .modal-content h3 { color: #0b2545; margin: 0 0 10px 0; }
+        
+        .qr-image { 
+            width: 200px; height: 200px; 
+            margin: 15px auto; display: block; 
+            border: 2px solid #ccc; padding: 10px; border-radius: 8px;
+        }
+        
+        .done-btn {
+            width: 100%; padding: 12px; background-color: #2e7d32; 
+            color: white; border: none; border-radius: 6px; 
+            font-size: 16px; font-weight: bold; cursor: pointer; 
+            margin-top: 15px; transition: 0.3s;
+        }
+        .done-btn:hover { background-color: #1b5e20; }
+    </style>
+</head>
+<body>
+<!-- Google Translate Floating Widget -->
+    <div id="google_translate_element" class="floating-translate"></div>
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Worker Apply Form</h2>
+            <p>**Please enter your correct information.**</p>
+        </div>
+
+        <form id="smartWorkerForm">
+            
+            <!-- १. फोटो अपलोड -->
+            <div class="photo-upload-container">
+                <label class="photo-preview" for="photoInput" id="photoContainer">
+                    <span id="photoText">📷<br>Upload<br>Photo</span>
+                    <img id="profileImage" src="" alt="Profile Photo">
+                </label>
+                <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(event)">
+            </div>
+
+            <div class="form-grid">
+                <!-- २. पूर्ण नाव -->
+                <div class="form-group full-width">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="" required>
+                </div>
+                <!-- नवीन: लिंग (Gender) -->
+                <div class="form-group">
+                    <label for="gender">Gender*</label>
+                    <select id="gender" required>
+                        <option value="" disabled selected>Choose...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- नवीन: जात / प्रवर्ग (Category) -->
+                <div class="form-group">
+                    <label for="casteCategory">Cast Category</label>
+                    <select id="casteCategory" required>
+                        <option value="" disabled selected>Choose...</option>
+                        <option value="Open">Open</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="VJNT">VJNT</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- नवीन: वैवाहिक स्थिती (Marital Status) -->
+                <div class="form-group">
+                    <label for="maritalStatus">Marital Status</label>
+                    <select id="maritalStatus" required>
+                        <option value="" disabled selected>Choose...</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </select>
+                </div>
+
+                <!-- ३. आधार कार्ड नंबर -->
+                <div class="form-group">
+                    <label for="aadhaar">Aadhaar Number</label>
+                    <input type="text" id="aadhaar" maxlength="12" pattern="\d{12}" placeholder="12 Digit Number" required>
+                </div>
+
+                <!-- ४. आधार लिंक मोबाईल नंबर -->
+                <div class="form-group">
+                    <label for="aadhaarMobile">Adharcard Link Mobile Number</label>
+                    <input type="tel" id="aadhaarMobile" maxlength="10" pattern="\d{10}" placeholder="10 Number Digits" required>
+                </div>
+
+                <!-- ५. सध्याचा मोबाईल नंबर -->
+                <div class="form-group">
+                    <label for="currentMobile">Mobile Number</label>
+                    <input type="tel" id="currentMobile" maxlength="10" pattern="\d{10}" placeholder="10 Digits" required>
+                </div>
+
+                <!-- ६. पिनकोड -->
+                <div class="form-group">
+                    <label for="pincode">Pincode</label>
+                    <input type="text" id="pincode" maxlength="6" pattern="\d{6}" placeholder="6 Number Pincode" oninput="fetchLocationDetails()" required>
+                    <small id="pincodeMsg" style="color:red; font-size:12px; display:none;">Pin Number is wrong</small>
+                </div>
+
+                <!-- ७. गाव / शहर -->
+                <div class="form-group">
+                    <label for="village">Village/City</label>
+                    <!-- एका पिनकोडवर अनेक गावे असू शकतात, म्हणून इथे Select (Dropdown) दिले आहे -->
+                    <select id="village" required>
+                        <option value="">Fill PinCode number</option>
+                    </select>
+                </div>
+
+                <!-- ८. तालुका -->
+                <div class="form-group">
+                    <label for="taluka">Taluka</label>
+                    <input type="text" id="taluka" placeholder="" required>
+                </div>
+
+                <!-- ९. जिल्हा -->
+                <div class="form-group">
+                    <label for="district">District</label>
+                    <input type="text" id="district" class="readonly-field" readonly required placeholder="">
+                </div>
+
+                <!-- १०. राज्य -->
+                <div class="form-group">
+                    <label for="state">State*</label>
+                    <input type="text" id="state" class="readonly-field" readonly required placeholder="">
+                </div>
+
+                <!-- ११. सविस्तर पत्ता -->
+                <div class="form-group full-width">
+                    <label for="detailedAddress">Detailed Address*</label>
+                    <textarea id="detailedAddress" rows="3" placeholder="" required></textarea>
+                </div>
+
+                <!-- १२. जन्मतारीख -->
+                <div class="form-group">
+                    <label for="dob">Date of Birth*</label>
+                    <input type="date" id="dob" required onchange="calculateAge()">
+                </div>
+
+                <!-- १३. वय (Age) -->
+                <div class="form-group">
+                    <label for="age">Age in Years</label>
+                    <input type="text" id="age" class="readonly-field" readonly placeholder="" required>
+                </div>
+                <!-- १४. वय गट (Age Category) -->
+                <div class="form-group">
+                    <label for="ageCategory">Age Category</label>
+                    <input type="text" id="ageCategory" class="readonly-field" readonly placeholder="">
+                </div>
+            </div>
+            <!-- १५. Notice Box (सुरुवातीला लपवलेला) -->
+                <div id="noticeBox" class="full-width" style="display: none; padding: 12px; margin-top: 15px; border-radius: 6px; font-size: 15px; font-weight: bold; text-align: center; border: 1px solid transparent;"></div>
+
+                <!-- १६. CSR / Educational Support सेक्शन (वय १-१३) -->
+                <!-- १६. CSR / Educational Support & Consent सेक्शन (अपडेट केलेला) -->
+                <div id="sectionCSR" class="form-grid full-width" style="display: none; margin-top: 15px; padding: 20px; border-radius: 8px; background-color: #fff3e0; border: 1px solid #ffcc80;">
+                    <h3 class="full-width" style="margin: 0 0 10px 0; color: #d35400;">📚 Educational Support & Consent</h3>
+                    
+                    <!-- १. PEN Number (School Name काढून हा नवीन कॉलम टाकला आहे) -->
+                    <div class="form-group">
+                        <label for="penNumber">PEN Number (Permanent Education Number) *</label>
+                        <input type="text" id="penNumber" placeholder="">
+                    </div>
+                    
+                    <!-- इयत्ता कॉलम (तसाच ठेवला आहे) -->
+                    <div class="form-group">
+                        <label for="standard">Standard</label>
+                        <input type="text" id="standard" placeholder="">
+                    </div>
+
+                    <!-- २. आधार कार्ड डॉक्युमेंट अपलोड -->
+                    <div class="form-group full-width">
+                        <label for="aadhaarDoc">Upload Aadhaar Card 2 Side:</label>
+                        <input type="file" id="aadhaarDoc" accept=".pdf, .jpg, .jpeg, .png">
+                    </div>
+
+                    <!-- ३. Parental Consent Checkbox (Required) -->
+                    <div class="form-group full-width" style="flex-direction: row; align-items: center; gap: 12px; background-color: white; padding: 15px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+                        <input type="checkbox" id="consentCheckbox"  style="width: 22px; height: 22px; margin: 0; cursor: pointer;">
+                        <label for="consentCheckbox" style="margin: 0; font-size: 15px; cursor: pointer; color: #d35400; font-weight: bold;">I agree to the Parental Consent terms. *</label>
+                    </div>
+                </div>
+
+                <!-- १७. Apprentice / Trainee सेक्शन (वय १४-१७) -->
+                <div id="sectionTrainee" class="form-grid full-width" style="display: none; margin-top: 15px; padding: 20px; border-radius: 8px; background-color: #e3f2fd; border: 1px solid #90caf9;">
+                    <h3 class="full-width" style="margin: 0 0 10px 0; color: #0b2545;">🛠️ Apprentice / Trainee</h3>
+                    <div class="form-group full-width">
+                        <label for="parentConsent">Upload Adharcard 2 Side:</label>
+                        <input type="file" id="parentConsent" accept=".pdf, .jpg, .png">
+                    </div>
+                    <div class="form-group full-width" style="flex-direction: row; align-items: center; gap: 12px; background-color: white; padding: 15px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+                        <input type="checkbox" id="consentCheckbox" style="width: 22px; height: 22px; margin: 0; cursor: pointer;">
+                        <label for="consentCheckbox" style="margin: 0; font-size: 15px; cursor: pointer; color: #d35400; font-weight: bold;">I agree to the Parental Consent terms. *</label>
+                    </div>
+                </div>
+
+                <!-- १८. Direct Skill & Work सेक्शन (वय १८-५९) -->
+                <!-- १८. Direct Skill & Work सेक्शन (वय १८-५९) (अपडेट केलेला) -->
+                <div id="sectionAdult" class="form-grid full-width" style="display: none; margin-top: 15px; padding: 20px; border-radius: 8px; background-color: #e8f5e9; border: 1px solid #a5d6a7;">
+                    <h3 class="full-width" style="margin: 0 0 10px 0; color: #2e7d32;">💼 Skill & Employment Details</h3>
+                    
+                    <!-- १. रेडिओ बटन्स -->
+                    <div class="form-group full-width" style="flex-direction: row; flex-wrap: wrap; gap: 20px; align-items: center; background: white; padding: 15px; border-radius: 6px; border: 1px solid #ccc;">
+                        <label style="margin:0; font-size:16px; color: #0b2545;"><b>Who are you ? *</b></label>
+                        <label style="cursor: pointer;"><input type="radio" name="userRole" value="Student" onchange="toggleAdultSections()"> Student</label>
+                        <label style="cursor: pointer;"><input type="radio" name="userRole" value="Worker" onchange="toggleAdultSections()"> Worker</label>
+                        <label style="cursor: pointer;"><input type="radio" name="userRole" value="Both" onchange="toggleAdultSections()">Both</label>
+                    </div>
+
+                    <!-- २. Student सेक्शन -->
+                    <div id="subSectionStudent" class="form-grid full-width" style="display: none; margin-top: 10px; padding: 15px; border: 1px dashed #4caf50; border-radius: 6px; background-color: #f1f8e9;">
+                        <h4 class="full-width" style="margin: 0 0 10px 0; color: #388e3c;">🎓 Student Details</h4>
+                        <div class="form-group">
+                            <label for="adultPenNumber">PEN Number (Permanent Education Number) *</label>
+                            <input type="text" id="adultPenNumber" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="adultStandard">Standard/Education) *</label>
+                            <input type="text" id="adultStandard" placeholder="">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="adultAadhaarDoc">Upload Aadhaar Card 2 Side*</label>
+                            <input type="file" id="adultAadhaarDoc" accept=".pdf, .jpg, .jpeg, .png">
+                        </div>
+                    </div>
+
+                    <!-- ३. Worker सेक्शन -->
+                    <div id="subSectionWorker" class="form-grid full-width" style="display: none; margin-top: 10px; padding: 15px; border: 1px dashed #2e7d32; border-radius: 6px; background-color: #e8f5e9;">
+                        <h4 class="full-width" style="margin: 0 0 10px 0; color: #1b5e20;">🛠️ Worker Details</h4>
+                        
+                        <div class="form-group">
+                            <label for="adultWorkType">Work Type *</label>
+                            <select id="adultWorkType" onchange="toggleOtherWorkType()">
+                                <option value="" disabled selected>Choose Work...</option>
+                                <option value="Plumber">Plumber</option>
+                                <option value="Electrician">Electrician</option>
+                                <option value="Manpower">Manpower</option>
+                                <option value="Cleaning">Cleaning</option>
+                                <option value="Centring Worker">Centring Worker</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Other Work Type Box (सुरुवातीला लपवलेला) -->
+                        <div class="form-group" id="otherWorkTypeBox" style="display: none;">
+                            <label for="otherWorkName">Specify Other Work) *</label>
+                            <input type="text" id="otherWorkName" placeholder="Enter the name of your job">
+                        </div>
+                        <div class="form-group">
+                            <label for="employmentType">Employment Type*</label>
+                            <select id="employmentType">
+                                <option value="" disabled selected>Choose Type...</option>
+                                <option value="Permanent">Permanent </option>
+                                <option value="Temporary">Temporary </option>
+                            </select>
+                            <!-- नवीन ॲड केलेला: कामाचा अनुभव -->
+                        <div class="form-group">
+                            <label for="expYears">Experience in Years*</label>
+                            <input type="number" id="expYears" min="0" placeholder="">
+                        </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="licenseDoc">**License/Certificate Document (Upload if available)</label>
+                            <input type="file" id="licenseDoc" accept=".pdf, .jpg, .jpeg, .png">
+                        </div>
+                    </div>
+                    <!-- १९. Senior Citizen सेक्शन (वय ६०+) -->
+                <div id="sectionSenior" class="form-grid full-width" style="display: none; margin-top: 15px; padding: 20px; border-radius: 8px; background-color: #fffde7; border: 1px solid #fbc02d;">
+                    <h3 class="full-width" style="margin: 0 0 10px 0; color: #f57f17;">🧓 **Registration for Senior Citizens (60+)**</h3>
+                    
+                    <div class="form-group full-width" style="background-color: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; color: #424242; font-size: 15px; line-height: 1.6;">
+                        <p style="margin: 0 0 12px 0;"><strong></strong><br> </p>
+                        <p style="margin: 0;"><strong>Health & Pension Schemes:</strong><br> If this is a social initiative (CSR) registration, this information can be used to help them access health check-ups or benefits under senior citizen welfare schemes.</p>
+                    </div>
+                </div>
+                </div>
+                <!-- सबमिट बटन -->
+            <button type="submit" class="submit-btn">Submit Application & Pay</button>
+        </form>
+    </div>
+    <!-- QR Code Payment Modal (फॉर्मच्या बाहेर) -->
+    <div id="qrModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Payment Required</h3>
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Please pay <strong>₹50</strong> to complete registration.</p>
+            
+            <!-- येथे QR कोड जनरेट होईल -->
+            <img id="qrCodeImg" class="qr-image" src="UPI.jpeg" alt="UPI QR Code">
+            
+            <p style="color: dimgray; font-size: 13px; margin-top: 5px;">Scan using PhonePe, GPay, or Paytm</p>
+            <!-- नवीन: UTR नंबर इनपुट -->
+            <div style="text-align: left; margin-bottom: 15px; margin-top: 15px;">
+                <label for="utrNumber" style="display: block; font-size: 14px; font-weight: bold; color: #0b2545; margin-bottom: 5px;">Transaction Id/ UTR Number (12 Digit) *</label>
+                <input type="text" id="utrNumber" maxlength="12" placeholder="EX. 123456789012" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
+                
+                <!-- एरर मेसेज (सुरुवातीला लपवलेला) -->
+                <small id="utrErrorMsg" style="color: red; font-size: 13px; display: none; margin-top: 5px; font-weight: bold;">**Please enter a valid 12-digit UTR number.**</small>
+            </div>
+            
+            <button type="button" class="done-btn" onclick="completePayment()">Done / Payment Completed</button>
+        </div>
+    </div>
+
+    <!-- =====================================
+         २. JavaScript लॉजिक (Smart Features)
+    ====================================== -->
+    <script>
+        // १. फोटो अपलोड आणि प्रिव्ह्यू करण्यासाठी लॉजिक
+        function previewPhoto(event) {
+            let input = event.target;
+            let image = document.getElementById('profileImage');
+            let text = document.getElementById('photoText');
+
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                    image.style.display = 'block';
+                    text.style.display = 'none'; // फोटो आल्यावर टेक्स्ट लपवा
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // २. पिनकोडवरून पत्ता शोधण्यासाठी (Postal API)
+        async function fetchLocationDetails() {
+            let pincode = document.getElementById('pincode').value;
+            let msg = document.getElementById('pincodeMsg');
+            let villageSelect = document.getElementById('village');
+
+            // जर पिनकोड ६ अंकी असेल तरच API कॉल करा
+            if (pincode.length === 6) {
+                try {
+                    let response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                    let data = await response.json();
+
+                    if (data[0].Status === "Success") {
+                        msg.style.display = "none";
+                        let postOffices = data[0].PostOffice;
+
+                        // राज्य, जिल्हा आणि तालुका भरणे
+                        document.getElementById('state').value = postOffices[0].State;
+                        document.getElementById('district').value = postOffices[0].District;
+                        
+                        // काही वेळा Block ऐवजी Region मध्ये तालुक्याचे नाव येते
+                        document.getElementById('taluka').value = postOffices[0].Block !== "NA" ? postOffices[0].Block : postOffices[0].Region;
+
+                        // गावांचे ड्रॉपडाऊन भरणे (कारण एका पिनकोडवर अनेक गावे असतात)
+                        villageSelect.innerHTML = ""; // जुने ऑप्शन काढा
+                        postOffices.forEach(po => {
+                            let option = document.createElement("option");
+                            option.value = po.Name;
+                            option.text = po.Name;
+                            villageSelect.appendChild(option);
+                        });
+
+                    } else {
+                        // चुकीचा पिनकोड असल्यास एरर दाखवा आणि फील्ड्स रिकामे करा
+                        msg.style.display = "block";
+                        clearAddressFields();
+                    }
+                } catch (error) {
+                    console.error("API Error:", error);
+                    msg.style.display = "block";
+                    clearAddressFields();
+                }
+            } else if(pincode.length < 6) {
+                // पिनकोड पूर्ण नसल्यास फील्ड्स रिकामे ठेवा
+                msg.style.display = "none";
+                clearAddressFields();
+            }
+        }
+
+        function clearAddressFields() {
+            document.getElementById('state').value = "";
+            document.getElementById('district').value = "";
+            document.getElementById('taluka').value = "";
+            document.getElementById('village').innerHTML = '<option value="">Fill Pincode</option>';
+        }
+
+        // ३. जन्मतारखेवरून वय (Age) काढण्याचे लॉजिक
+        // ३. जन्मतारखेवरून वय (Age) काढण्याचे आणि नवीन सेक्शन्स दाखवण्याचे लॉजिक
+        // ३. जन्मतारखेवरून वय (Age) काढण्याचे आणि नवीन सेक्शन्स दाखवण्याचे लॉजिक
+        function calculateAge() {
+            let dobInput = document.getElementById('dob').value;
+            let ageField = document.getElementById('age');
+
+            // सर्व नवीन HTML एलिमेंट्स मिळवणे
+            let ageCategoryField = document.getElementById('ageCategory');
+            let noticeBox = document.getElementById('noticeBox');
+            let sectionCSR = document.getElementById('sectionCSR');
+            let sectionTrainee = document.getElementById('sectionTrainee');
+            let sectionAdult = document.getElementById('sectionAdult');
+            let sectionSenior = document.getElementById('sectionSenior'); // ही ओळ ॲड केली आहे
+
+            // जन्मतारीख बदलल्यावर जुने सेक्शन्स आणि नोटीस लपवा (Reset)
+            if(noticeBox) noticeBox.style.display = "none";
+            if(sectionCSR) sectionCSR.style.display = "none";
+            if(sectionTrainee) sectionTrainee.style.display = "none";
+            if(sectionAdult) sectionAdult.style.display = "none";
+            if(sectionSenior) sectionSenior.style.display = "none"; // ही ओळ ॲड केली आहे
+            if(ageCategoryField) ageCategoryField.value = "";
+
+            if (dobInput) {
+                let dob = new Date(dobInput);
+                let today = new Date();
+                
+                let age = today.getFullYear() - dob.getFullYear();
+                let monthDiff = today.getMonth() - dob.getMonth();
+                
+                // जर या वर्षी अजून वाढदिवस आला नसेल, तर वयातून १ वर्ष कमी करा
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+
+                // वय जर ० पेक्षा कमी येत असेल (चुकीची जन्मतारीख) तर एरर दाखवा
+                if(age < 0) {
+                    ageField.value = "Wrong Date";
+                    ageField.style.color = "red";
+                } else {
+                    // अचूक वय दाखवा
+                    ageField.value = age + " Year";
+                    ageField.style.color = "#495057"; // नॉर्मल रंग
+                    
+                    // --- नवीन ॲडव्हान्स लॉजिक (Show/Hide) ---
+                    if (age >= 1 && age <= 13) {
+                        ageCategoryField.value = "1-13 Age";
+                        noticeBox.innerHTML = "Registration for employment is not permitted under child labour laws. You are registering for CSR educational assistance.";
+                        noticeBox.style.color = "#d32f2f"; 
+                        noticeBox.style.backgroundColor = "#ffebee";
+                        noticeBox.style.borderColor = "#ffcdd2";
+                        noticeBox.style.display = "block";
+                        sectionCSR.style.display = "grid"; 
+
+                    } else if (age >= 14 && age <= 17) {
+                        ageCategoryField.value = "14-17 Age";
+                        noticeBox.innerHTML = "You are registering as a “Trainee.” Parental consent is required.";
+                        noticeBox.style.color = "#1565c0"; 
+                        noticeBox.style.backgroundColor = "#e3f2fd";
+                        noticeBox.style.borderColor = "#90caf9";
+                        noticeBox.style.display = "block";
+                        sectionTrainee.style.display = "grid"; 
+
+                    } else if (age >= 18 && age <= 59) {
+                        ageCategoryField.value = "18-59 Age";
+                        noticeBox.innerHTML = "**You are registering as a “Regular Candidate/Student.”**";
+                        noticeBox.style.color = "#2e7d32"; 
+                        noticeBox.style.backgroundColor = "#e8f5e9";
+                        noticeBox.style.borderColor = "#a5d6a7";
+                        noticeBox.style.display = "block";
+                        sectionAdult.style.display = "grid"; 
+
+                    } else if (age >= 60) {
+                        // ६०+ चे लॉजिक जे तुमच्या कोडमध्ये मिसिंग होते
+                        ageCategoryField.value = "60+ Age";
+                        noticeBox.innerHTML = "You are registering as a “Senior Citizen.” We value and respect your experience.";
+                        noticeBox.style.color = "#e65100";
+                        noticeBox.style.backgroundColor = "#fff3e0";
+                        noticeBox.style.borderColor = "#ffcc80";
+                        noticeBox.style.display = "block";
+                        sectionSenior.style.display = "grid";
+                    }
+                }
+            } else {
+                ageField.value = "";
+            }
+        }
+        // ४. १८-५९ वयोगटातील रेडिओ बटन्सनुसार Student/Worker सेक्शन्स दाखवणे
+        function toggleAdultSections() {
+            let role = document.querySelector('input[name="userRole"]:checked');
+            let subSectionStudent = document.getElementById('subSectionStudent');
+            let subSectionWorker = document.getElementById('subSectionWorker');
+
+            if (role) {
+                if (role.value === "Student") {
+                    subSectionStudent.style.display = "grid";
+                    subSectionWorker.style.display = "none";
+                } else if (role.value === "Worker") {
+                    subSectionStudent.style.display = "none";
+                    subSectionWorker.style.display = "grid";
+                } else if (role.value === "Both") {
+                    subSectionStudent.style.display = "grid";
+                    subSectionWorker.style.display = "grid";
+                }
+            }
+        }
+
+        // ५. Worker सेक्शनमध्ये 'Other' निवडल्यास नवीन टेक्स्ट बॉक्स दाखवणे
+        function toggleOtherWorkType() {
+            let workType = document.getElementById('adultWorkType').value;
+            let otherWorkTypeBox = document.getElementById('otherWorkTypeBox');
+
+            if (workType === "Other") {
+                otherWorkTypeBox.style.display = "flex"; // दाखवण्यासाठी 
+            } else {
+                otherWorkTypeBox.style.display = "none"; // लपवण्यासाठी
+            }
+        }
+        // ६. QR Code Modal आणि Payment लॉजिक
+        let form = document.getElementById('smartWorkerForm');
+        let qrModal = document.getElementById('qrModal');
+        let qrCodeImg = document.getElementById('qrCodeImg');
+
+        // जेव्हा युजर फॉर्म सबमिट करेल
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // फॉर्म डायरेक्ट रिफ्रेश/सबमिट होण्यापासून थांबवा
+            
+            // UPI Link Generation (₹50 Fixed)
+            let upiId = "sanjanaarne@oksbi"; // तुमचा खरा UPI ID इथे टाका (उदा. 9876543210@ybl)
+            let payeeName = "APEX Manpower Service";
+            let amount = "50";
+            
+            // UPI URL फॉरमॅट
+            let upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR`;
+            
+            // api.qrserver.com वापरून डायनॅमिक QR लिंक बनवणे
+            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+            
+            // Modal मध्ये QR कोड दाखवणे आणि Modal ओपन करणे
+            qrCodeImg.src = qrApiUrl;
+            qrModal.style.display = "flex";
+        });
+
+       // जेव्हा युजर पेमेंट करून 'Done' वर क्लिक करेल (UTR Validation सह)
+        // Firebase Initialize (तुमच्या दिलेल्या API Key सह)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
+            authDomain: "apex-245ed.firebaseapp.com",
+            projectId: "apex-245ed",
+            storageBucket: "apex-245ed.firebasestorage.app",
+            messagingSenderId: "1082704594683",
+            appId: "1:1082704594683:web:5c1c67afeb0eadfb68d25e"
+        };
+
+        // Firebase सुरु करणे
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // UTR Validation आणि Firebase मध्ये डेटा सेव्ह करण्याचे फंक्शन
+        function completePayment() {
+            let utrInput = document.getElementById('utrNumber').value;
+            let utrError = document.getElementById('utrErrorMsg');
+            let qrModal = document.getElementById('qrModal');
+            let form = document.getElementById('smartWorkerForm');
+
+            // UTR नंबर नक्की १२ अंकी (फक्त आकडे) आहे का तपासणे
+            let utrPattern = /^\d{12}$/;
+
+            if (utrPattern.test(utrInput)) {
+                utrError.style.display = "none"; 
+                
+                // फॉर्ममधील सर्व डेटा गोळा करणे
+                // फॉर्ममधील सर्व डेटा (A to Z) गोळा करणे
+                let roleEle = document.querySelector('input[name="userRole"]:checked');
+                
+                // प्रोफाइल फोटो Base64 मध्ये घेणे (कमी साईझचा फोटो डायरेक्ट सेव्ह होईल)
+                let profileImgSrc = document.getElementById('profileImage').src;
+                let photoData = profileImgSrc.includes('base64') ? profileImgSrc : "";
+
+                let workerData = {
+                    // बेसिक माहिती
+                    fullName: document.getElementById('fullName').value,
+                    gender: document.getElementById('gender').value,
+                    casteCategory: document.getElementById('casteCategory').value,
+                    maritalStatus: document.getElementById('maritalStatus').value,
+                    aadhaarNumber: "[Aadhaar Redacted]", // सुरक्षिततेसाठी
+                    aadhaarMobile: document.getElementById('aadhaarMobile').value,
+                    mobileNumber: document.getElementById('currentMobile').value,
+                    pincode: document.getElementById('pincode').value,
+                    village: document.getElementById('village').value,
+                    taluka: document.getElementById('taluka').value,
+                    district: document.getElementById('district').value,
+                    state: document.getElementById('state').value,
+                    address: document.getElementById('detailedAddress').value,
+                    dob: document.getElementById('dob').value,
+                    age: document.getElementById('age').value,
+                    ageCategory: document.getElementById('ageCategory').value,
+                    
+                    // --- नवीन ॲड केलेली माहिती (शिक्षण, काम, अनुभव) ---
+                    userRole: roleEle ? roleEle.value : "",
+                    penNumber: document.getElementById('penNumber') ? document.getElementById('penNumber').value : "" || document.getElementById('adultPenNumber') ? document.getElementById('adultPenNumber').value : "",
+                    standard: document.getElementById('standard') ? document.getElementById('standard').value : "" || document.getElementById('adultStandard') ? document.getElementById('adultStandard').value : "",
+                    workType: document.getElementById('adultWorkType') ? document.getElementById('adultWorkType').value : "",
+                    otherWork: document.getElementById('otherWorkName') ? document.getElementById('otherWorkName').value : "",
+                    employmentType: document.getElementById('employmentType') ? document.getElementById('employmentType').value : "",
+                    expYears: document.getElementById('expYears') ? document.getElementById('expYears').value : "",
+                    
+                    // --- फोटो आणि डॉक्युमेंट्स तपासणे ---
+                    profilePhoto: photoData,
+                    hasAadhaarDoc: (document.getElementById('aadhaarDoc') && document.getElementById('aadhaarDoc').files.length > 0) || (document.getElementById('adultAadhaarDoc') && document.getElementById('adultAadhaarDoc').files.length > 0),
+                    hasConsentDoc: document.getElementById('parentConsent') && document.getElementById('parentConsent').files.length > 0,
+                    hasLicenseDoc: document.getElementById('licenseDoc') && document.getElementById('licenseDoc').files.length > 0,
+                    
+                    utrNumber: utrInput,
+                    status: "Pending",
+                    registrationDate: new Date().toLocaleString()
+                };
+
+                // Firebase Firestore मध्ये 'workers' नावाच्या Collection मध्ये डेटा पाठवणे
+                db.collection("workers").add(workerData)
+                .then((docRef) => {
+                    qrModal.style.display = "none"; 
+                    alert("✅ Registration Successful!Your data and UTR number have been saved to the database.");
+                    if(form) form.reset();
+                    document.getElementById('utrNumber').value = ""; 
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert("❌ An error occurred while saving the data. Please try again.");
+                });
+
+            } else {
+                utrError.style.display = "block"; 
+                document.getElementById('utrNumber').style.borderColor = "red";
+                setTimeout(() => {
+                    document.getElementById('utrNumber').style.borderColor = "#ccc";
+                }, 2000);
+            }
+        }
+    </script>
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'mr', /* तुमच्या पेजची मुख्य भाषा (मराठी) */
+                includedLanguages: 'en,mr,hi', /* कोणत्या भाषांमध्ये बदलता येईल (इंग्रजी, मराठी, हिंदी) */
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>

@@ -1,0 +1,499 @@
+/* बेसिक सेटिंग्ज */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: white;
+    padding-top: 110px;
+}
+
+/* हेडर डिझाईन */
+.header {
+    background-color: #0b2545; /* गडद निळा रंग */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* लोगो आणि कंपनीचे नाव */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    width: 80px; /* लोगोची साईझ */
+    height: auto;
+    border-radius: 50%;
+    background-color: white;
+    padding: 5px;
+}
+
+.company-info h1 {
+    font-size: 26px;
+    color: #ff6600; /* केशरी रंग */
+    letter-spacing: 1px;
+}
+
+.company-info .motto {
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+/* नेव्हिगेशन मेन्यू (Navbar) */
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+/* मेन्यूवर माउस नेल्यावर होणारा बदल (Hover effect) */
+.navbar ul li a:hover, .navbar ul li a.active {
+    background-color: #ff6600;
+    color: white;
+}
+
+/* मुख्य भागाची स्टाईल */
+/* मुख्य भागाचे पॅडिंग काढले जेणेकरून इमेज पूर्ण स्क्रीनवर बसेल */
+.main-content {
+    padding: 0;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+/* स्लाइडर डिझाईन */
+.slider {
+    width: 100%;
+    height: 500px; /* तुम्हाला उंची कमी-जास्त करायची असल्यास हा नंबर बदलू शकता */
+    overflow: hidden;
+}
+
+.slider figure {
+    position: relative;
+    width: 400%; /* ४ इमेजेस असल्यामुळे ४००% */
+    margin: 0;
+    left: 0;
+    animation: slide-animation 15s infinite; /* १५ सेकंदाचे ॲनिमेशन */
+}
+
+.slider figure img {
+    width: 25%; /* प्रत्येक इमेजला समान जागा */
+    height: 500px;
+    float: left;
+    object-fit: cover; /* HD इमेज न फाटता (Stretch न होता) व्यवस्थित दिसेल */
+    object-position: top; 
+}
+
+/* इमेजेस स्लाइड होण्यासाठी कीफ्रेम्स (Keyframes) */
+@keyframes slide-animation {
+    0% { left: 0; }
+    20% { left: 0; }
+    25% { left: -100%; }
+    45% { left: -100%; }
+    50% { left: -200%; }
+    70% { left: -200%; }
+    75% { left: -300%; }
+    100% { left: -300%; }
+}
+/* --- नवीन सेक्शन्सची स्टाईल --- */
+
+/* सामान्य कंटेनर आणि टायटल */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.section-title {
+    color: #ff6600; /* केशरी रंग */
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* १. About Us Section */
+.about-section {
+    background-color: white;
+    color: #0b2545; /* निळा रंग */
+}
+
+.motto-text {
+    color: #0b2545;
+    font-style: italic;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.about-section p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* २. Address & Map Section */
+.map-section {
+    background-color: #0b2545; /* निळा रंग */
+    color: white;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.address-box, .map-box {
+    flex: 1;
+    min-width: 300px;
+    text-align: left;
+}
+
+.address-box p {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+/* ३. Our Services Section */
+.services-section {
+    background-color: white;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.service-card {
+    background-color: white;
+    border: 2px solid #0b2545; /* निळ्या रंगाची बॉर्डर */
+    border-radius: 10px;
+    padding: 30px 20px;
+    width: 30%;
+    min-width: 280px;
+    transition: 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.service-card h3 {
+    color: #ff6600; /* केशरी रंग */
+    margin-bottom: 15px;
+}
+
+.service-card p {
+    color: #0b2545;
+    line-height: 1.5;
+}
+
+/* कार्डवर माउस नेल्यावर (Hover) */
+.service-card:hover {
+    background-color: #0b2545;
+    color: white;
+    border-color: #ff6600;
+}
+
+.service-card:hover h3, .service-card:hover p {
+    color: white;
+}
+
+/* ४. Why Choose Us Section */
+.why-us-section {
+    background-color: #0b2545;
+    color: white;
+}
+
+.features-list {
+    list-style-type: none;
+    font-size: 20px;
+    text-align: left;
+    display: inline-block;
+}
+
+.features-list li {
+    margin-bottom: 15px;
+    background-color: white;
+    color: #0b2545;
+    padding: 10px 20px;
+    border-left: 5px solid #ff6600; /* केशरी हायलाईट */
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* ५. Quick Contact Section */
+.contact-section {
+    background-color: white;
+    color: #0b2545;
+}
+
+.contact-numbers {
+    font-size: 24px;
+    color: #ff6600;
+    margin: 20px 0;
+}
+
+.whatsapp-btn {
+    display: inline-block;
+    background-color: #ff6600;
+    color: white;
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.whatsapp-btn:hover {
+    background-color: #0b2545;
+}
+
+/* ६. Footer Section */
+.footer {
+    background-color: #0b2545;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-top: 3px solid #ff6600;
+}
+
+.social-links {
+    margin-top: 10px;
+}
+
+.social-links a {
+    color: #ff6600;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.social-links a:hover {
+    color: white;
+}
+/* Google Translate Widget ची स्टाईल */
+#google_translate_element {
+    margin-left: 20px;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+/* गुगल ट्रान्सलेटचा वरचा पांढरा पॉप-अप बार (Banner) लपवण्यासाठी */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+/* पेजला वरून येणारी रिकामी जागा (Space) काढण्यासाठी */
+body {
+    top: 0px !important; 
+}
+/* --- वेबसाईट रिस्पॉन्सिव्ह (Mobile-Friendly) बनवण्यासाठी CSS --- */
+
+/* १. मजकूर किंवा इमेजेस स्क्रीनच्या बाहेर जाऊ नयेत म्हणून (Prevent Horizontal Scroll) */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* मोबाईल स्क्रीनसाठी Media Query (768px आणि त्यापेक्षा कमी) */
+@media (max-width: 768px) {
+    
+    /* २. हेडर आणि मेनुबार (Navbar) एकाखाली एक (Vertical) सेट करणे */
+    .header {
+        flex-direction: column;
+        padding: 15px 10px;
+        text-align: center;
+        position: static;
+    }
+    body {
+        padding-top: 0; 
+    }
+
+    .logo-container {
+        flex-direction: column; /* लोगो आणि नाव एकाखाली एक दिसेल */
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .company-info h1 {
+        font-size: 22px; /* मोबाईलवर फॉन्ट थोडा लहान केला आहे */
+    }
+
+    /* मेनुच्या लिंक्स मोबाईलवर एकाखाली एक (Vertical) दाखवण्यासाठी */
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .navbar ul li a {
+        display: block; /* बटन पूर्ण रुंदीचे दिसेल */
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+
+    /* ३. सेवांचे बॉक्सेस (Cards) आणि मॅप सेक्शन एकाखाली एक (Vertical) सेट करणे */
+    .flex-container {
+        flex-direction: column; /* पत्ता आणि मॅप एकाखाली एक येतील */
+    }
+
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .service-card {
+        width: 100%; /* कार्ड मोबाईलच्या पूर्ण स्क्रीनवर बसेल */
+        margin-bottom: 15px;
+    }
+
+    /* ४. इमेजेस आणि स्लाइडर मोबाईलच्या स्क्रीननुसार ॲडजस्ट करणे */
+    .slider, .slider figure img {
+        height: 250px !important; /* मोबाईलवर स्लाइडरची उंची कमी केली आहे जेणेकरून जागा वाचेल */
+    }
+
+    /* ५. सेक्शन टायटलची साईज मोबाईलनुसार ॲडजस्ट करणे */
+    .section-title {
+        font-size: 24px;
+    }
+    
+    /* गुगल ट्रान्सलेट विजेट मोबाईलवर मध्यभागी दिसावे म्हणून */
+    #google_translate_element {
+        margin: 10px auto;
+        display: block;
+    }
+}
+/* =========================================
+   Worker Apply फॉर्म डिझाईन (Worker Apply Page)
+========================================== */
+
+/* पेजचा बॅकग्राउंड थोडा वेगळा ठेवण्यासाठी जेणेकरून फॉर्म उठून दिसेल */
+.apply-page-body {
+    background-color: #f4f6f9;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* फॉर्मचा मुख्य बॉक्स */
+.apply-container {
+    background-color: white;
+    width: 100%;
+    max-width: 550px; /* फॉर्मची जास्तीत जास्त रुंदी */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-top: 6px solid #ff6600; /* वरती आकर्षक केशरी बॉर्डर */
+}
+
+/* फॉर्म हेडर (टायटल) */
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    color: #0b2545; /* निळा रंग */
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.form-header p {
+    color: #666;
+    font-size: 15px;
+}
+
+/* इनपुट फील्ड्सचे ग्रुप्स */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #0b2545;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* इनपुट, सिलेक्ट आणि टेक्स्ट एरिया ची स्टाईल */
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: 0.3s;
+    background-color: #fcfcfc;
+}
+
+/* फील्डवर क्लिक केल्यावर होणारा बदल (Focus Effect) */
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ff6600;
+    box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+    background-color: white;
+}
+
+/* सबमिट बटन डिझाईन */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #0b2545; /* निळा रंग */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+/* बटनावर माउस नेल्यावर (Hover) */
+.submit-btn:hover {
+    background-color: #ff6600; /* केशरी रंग */
+    transform: translateY(-2px); /* बटन थोडे वर उचलले जाईल */
+    box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+}
