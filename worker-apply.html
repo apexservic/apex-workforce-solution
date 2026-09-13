@@ -823,10 +823,32 @@
                 };
 
                 // Firebase Firestore मध्ये 'workers' नावाच्या Collection मध्ये डेटा पाठवणे
-                db.collection("workers").add(workerData)
+                // १. आधी डेटाबेसमधील सर्वात शेवटचा 'regNo' शोधणे
+                db.collection("workers").orderBy("regNo", "desc").limit(1).get()
+                .then((snapshot) => {
+                    let nextNum = 1; // जर डेटाबेस रिकामा असेल, तर १ पासून सुरुवात होईल
+                    
+                    if (!snapshot.empty) {
+                        let lastWorker = snapshot.docs[0].data();
+                        if (lastWorker.regNo) {
+                            // "AP00005" मधून "AP" काढून फक्त 5 घेणे आणि त्यात 1 मिळवणे
+                            let lastNumStr = lastWorker.regNo.replace("AP", "");
+                            nextNum = parseInt(lastNumStr) + 1;
+                        }
+                    }
+
+                    // २. नवीन नंबर तयार करणे (उदा. 1 चे AP00001, 12 चे AP00012)
+                    let newRegNo = "AP" + String(nextNum).padStart(5, '0');
+                    
+                    // ३. हा नंबर workerData मध्ये गुपचूप ॲड करणे (हा कामगाराला कुठेही दिसणार नाही)
+                    workerData.regNo = newRegNo;
+
+                    // ४. आता फायनल डेटा Firebase मध्ये सेव्ह करणे
+                    return db.collection("workers").add(workerData);
+                })
                 .then((docRef) => {
                     qrModal.style.display = "none"; 
-                    alert("✅ Registration Successful!Your data and UTR number have been saved to the database.");
+                    alert("✅ Registration Successful! Your data and UTR number have been saved.");
                     if(form) form.reset();
                     document.getElementById('utrNumber').value = ""; 
                 })

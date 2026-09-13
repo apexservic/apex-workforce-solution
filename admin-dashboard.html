@@ -54,6 +54,7 @@
                 <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; background: white;">
                     <thead>
                         <tr style="background-color: #0b2545; color: white;">
+                            <th style="padding: 10px;">Reg. No</th>
                             <th style="padding: 10px;">Full Name</th>
                             <th style="padding: 10px;">Mobile</th>
                             <th style="padding: 10px;">Age Category</th>
@@ -115,6 +116,10 @@
                     
                     // १. मुख्य रो (ज्यावर क्लिक केल्यावर माहिती दिसेल)
                     let mainRow = `<tr>
+                        <!-- हा नवीन डेटा कॉलम ॲड केला -->
+                        <td style="padding: 10px; font-weight: bold; color: #ff6600;">
+                            ${data.regNo || 'Pending'}
+                        </td>
                         <td style="padding: 10px;">
                             <span style="color: #0b2545; font-weight: bold; cursor: pointer; text-decoration: underline;" onclick="toggleDetails('${docId}')">
                                 ${data.fullName || 'N/A'}
@@ -134,7 +139,7 @@
                     // २. एक्सपांड होणारी तपशीलवार रो (Accordion Details Box)
                     // २. एक्सपांड होणारी तपशीलवार रो (A to Z माहिती, फोटो आणि डॉक्युमेंट्ससह)
                     let detailsRow = `<tr id="details-${docId}" class="details-row">
-                        <td colspan="7" style="padding: 0;">
+                        <td colspan="8" style="padding: 0;">
                             <div style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 20px; padding: 20px; border-left: 4px solid #ff6600; background: #fafafa; font-size: 14px; color: #0b2545;">
                                 
                                 <!-- १. प्रोफाइल फोटो आणि रोल -->

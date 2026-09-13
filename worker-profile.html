@@ -7,16 +7,16 @@
     
     <style>
         /* =====================================
-           १. CSS - प्रोफाईल आणि लॉगिन डिझाईन
+           १. CSS - ग्लोबल डिझाईन
         ====================================== */
         * {
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
         }
         body {
-            background-color: #f4f6f9;
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,15 +24,15 @@
             padding: 20px;
         }
         
-        /* कार्ड डिझाईन */
-        .card {
+        /* लॉगिन कार्ड डिझाईन */
+        .login-card {
             background-color: white;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-top: 6px solid #0b2545;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid #ff6600;
         }
 
         .header-title {
@@ -40,109 +40,167 @@
             color: #0b2545;
             margin-bottom: 25px;
             font-size: 24px;
+            font-weight: bold;
         }
 
         /* इनपुट फील्ड्स */
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
         .form-group label {
-            display: block;
-            color: #333;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 14px;
+            display: block; color: #333; font-weight: bold; margin-bottom: 5px; font-size: 14px;
         }
         .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-            background-color: #fcfcfc;
+            width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px;
         }
         .form-group input:focus {
-            outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+            outline: none; border-color: #ff6600; box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
         }
 
-        /* बटन्स */
         .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #ff6600;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
+            width: 100%; padding: 12px; background-color: #ff6600; color: white; border: none;
+            border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         .btn:hover { background-color: #e65c00; }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* प्रोफाईल UI डिझाईन */
+        /* =====================================
+           २. प्रोफाईल UI डिझाईन (नवीन BOCW स्टाईल)
+        ====================================== */
         #profileSection {
             display: none; /* सुरुवातीला लपवलेले */
-            max-width: 600px;
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        .profile-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #ff6600;
-        }
-        .profile-info h3 { color: #0b2545; margin-bottom: 5px; font-size: 22px; }
-        .profile-info p { color: #666; font-size: 14px; }
 
-        /* प्रोफाईल ग्रिड (माहिती दाखवण्यासाठी) */
-        .info-grid {
+        /* कंपनी हेडर */
+        .company-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .company-header h1 {
+            color: #c00000;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ग्रे टायटल बार */
+        .profile-title-bar {
+            background-color: #e2e3e5;
+            text-align: center;
+            padding: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* टॅब हेडर */
+        .section-header {
+            padding: 15px 30px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            color: #0056b3;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* मुख्य कंटेंट लेआउट (Left Info, Right Photo) */
+        .profile-body {
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        /* डावी बाजू - माहिती */
+        .info-container {
+            flex: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            row-gap: 20px;
+            column-gap: 15px;
         }
-        .info-box {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+
+        .info-item {
+            font-size: 15px;
+            line-height: 1.5;
         }
-        .info-box span { display: block; font-size: 12px; color: #888; margin-bottom: 3px; }
-        .info-box strong { color: #0b2545; font-size: 15px; }
+        .info-item span {
+            color: #555;
+            display: inline-block;
+            width: 160px; /* अलाईनमेंटसाठी */
+        }
+        .info-item strong {
+            color: #111;
+        }
+        .status-green { color: #28a745 !important; }
+        
+        /* उजवी बाजू - फोटो */
+        .photo-container {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .worker-photo {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            background-color: #440000; /* डार्क रेड बॅकग्राउंड फोटो नसल्यास */
+        }
 
         /* डॉक्युमेंट्स सेक्शन */
-        .docs-section {
-            background-color: #e8f5e9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px dashed #4caf50;
+        .documents-section {
+            padding: 0 30px 30px 30px;
         }
-        .docs-section strong { color: #2e7d32; }
+        .doc-list {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .doc-item:last-child { border-bottom: none; }
+        .doc-name { font-size: 15px; color: #333; font-weight: 500; }
+        .view-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 6px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .view-btn:hover { background-color: #0056b3; }
 
-        @media (max-width: 500px) {
-            .info-grid { grid-template-columns: 1fr; }
+        /* रिस्पॉन्सिव्ह डिझाईन */
+        @media (max-width: 768px) {
+            .profile-body { flex-direction: column-reverse; align-items: center; }
+            .info-container { grid-template-columns: 1fr; width: 100%; }
+            .info-item span { width: 140px; }
+            .photo-container { width: 180px; margin-bottom: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- १. लॉगिन आणि OTP सेक्शन -->
-    <div class="card" id="loginSection">
-        <h2 class="header-title">Worker Profile Login</h2>
-        <p style="text-align: center; color: #666; font-size: 14px; margin-bottom: 20px;">Enter your Aadhaar number and registered mobile number.</p>
+    <!-- १. लॉगिन आणि OTP सेक्शन (तुम्ही सांगितल्याप्रमाणे तसाच ठेवला आहे) -->
+    <div class="login-card" id="loginSection">
+        <h2 class="header-title">Worker Login</h2>
+        <p style="text-align: center; color: #666; font-size: 14px; margin-bottom: 20px;">Enter your Aadhaar and mobile number.</p>
         
         <div class="form-group">
             <label>Aadhaar Number</label>
@@ -154,12 +212,9 @@
             <input type="tel" id="mobileInput" maxlength="10" placeholder="10 Digit Mobile Number" required>
         </div>
 
-        <!-- Invisible reCAPTCHA साठी कंटेनर -->
         <div id="recaptcha-container"></div>
-
         <button class="btn" id="sendOtpBtn">Send OTP</button>
 
-        <!-- OTP टाकण्याचा बॉक्स (सुरुवातीला लपवलेला) -->
         <div id="otpBox" style="display: none; margin-top: 25px; border-top: 1px solid #ccc; padding-top: 20px;">
             <div class="form-group">
                 <label>Enter OTP</label>
@@ -169,85 +224,98 @@
         </div>
     </div>
 
-    <!-- २. प्रोफाईल दाखवणारा सेक्शन (लॉगिन झाल्यावर दिसेल) -->
-    <div class="card" id="profileSection">
-        <div class="profile-header">
-            <img id="profPhoto" class="profile-photo" src="https://via.placeholder.com/100" alt="Profile">
-            <div class="profile-info">
-                <h3 id="profName">Loading...</h3>
-                <p id="profRole" style="font-weight: bold; color: #ff6600;">Role</p>
-                <p id="profStatus" style="color: green; font-weight: bold;">Status: Pending</p>
-            </div>
-        </div>
-
-        <div class="info-grid">
-            <div class="info-box">
-                <span>Mobile Number</span>
-                <strong id="profMobile">-</strong>
-            </div>
-            <div class="info-box">
-                <span>Aadhaar Number</span>
-                <strong id="profAadhaar">-</strong>
-            </div>
-            <div class="info-box">
-                <span>Age / DOB</span>
-                <strong id="profAge">-</strong>
-            </div>
-            <div class="info-box">
-                <span>Work / Education</span>
-                <strong id="profWork">-</strong>
-            </div>
-            <div class="info-box">
-                <span>Village & District</span>
-                <strong id="profLocation">-</strong>
-            </div>
-            <div class="info-box">
-                <span>UTR Number</span>
-                <strong id="profUtr">-</strong>
-            </div>
-        </div>
-
-        <div class="docs-section">
-            <strong>Attached Documents:</strong>
-            <p id="profDocs" style="font-size: 14px; margin-top: 5px; color: #444; line-height: 1.6;"></p>
+    <!-- २. नवीन डिझाईन केलेले प्रोफाईल सेक्शन -->
+    <div id="profileSection">
+        <!-- कंपनी हेडर -->
+        <div class="company-header">
+            <h1>APEX WORKFORCE SOLUTION</h1>
         </div>
         
-        <button class="btn" style="margin-top: 20px; background-color: #d32f2f;" onclick="location.reload()">Logout</button>
+        <!-- टायटल बार -->
+        <div class="profile-title-bar">
+            Worker Profile
+        </div>
+        <div class="section-header">
+            Basic Details
+        </div>
+
+        <!-- मुख्य माहिती आणि फोटो -->
+        <div class="profile-body">
+            
+            <!-- डावी बाजू: माहिती -->
+            <div class="info-container">
+                <div class="info-item"><span>Name:</span> <strong id="profName">Loading...</strong></div>
+                <div class="info-item"><span>Mobile:</span> <strong id="profMobile">-</strong></div>
+                
+                <div class="info-item"><span>DOB:</span> <strong id="profDob">-</strong></div>
+                <div class="info-item"><span>Age (Current):</span> <strong id="profAge">-</strong></div>
+                
+                <div class="info-item"><span>Gender:</span> <strong id="profGender">-</strong></div>
+                <div class="info-item"><span>Marital Status:</span> <strong id="profMarital">-</strong></div>
+                
+                <div class="info-item"><span>Aadhar Number:</span> <strong id="profAadhaar">-</strong></div>
+                <div class="info-item"><span>Cast category:</span> <strong id="profCast">-</strong></div>
+                
+                <div class="info-item"><span>Registration No:</span> <strong id="profRegNo">-</strong></div>
+                
+                <div class="info-item"><span>Village & District:</span> <strong id="profLocation">-</strong></div>
+            </div>
+
+            <!-- उजवी बाजू: मोठा फोटो -->
+            <div class="photo-container">
+                <img id="profPhoto" class="worker-photo" src="https://via.placeholder.com/220x260?text=Photo" alt="Profile Image">
+            </div>
+        </div>
+
+        <!-- डॉक्युमेंट्स सेक्शन -->
+        <div class="documents-section">
+            <h3 style="color: #0b2545; font-size: 18px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Uploaded Documents</h3>
+            <div class="doc-list" id="profDocsList">
+                <!-- Javascript मधून इथे डॉक्युमेंट्स दिसतील -->
+            </div>
+            <!-- सरकारी योजना (Government Schemes) सेक्शन -->
+        <div class="schemes-section" style="padding: 0 30px 30px 30px;">
+            <h3 style="color: #0b2545; font-size: 18px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Eligible Government Schemes</h3>
+            
+            <button id="findSchemesBtn" class="btn" style="background-color: #28a745; margin-top: 15px;">Check Applicable Schemes</button>
+            
+            <div id="schemesList" style="margin-top: 15px; display: none; background-color: #e8f5e9; padding: 15px; border-radius: 5px; border: 1px solid #4caf50;">
+                <!-- इथे ऑटोमॅटिक योजना दिसतील -->
+            </div>
+        </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" style="background-color: #d32f2f; width: 200px;" onclick="location.reload()">Logout</button>
+            </div>
+        </div>
     </div>
 
     <!-- =====================================
-         ३. Firebase v9 Modular JavaScript 
+         ३. Firebase JavaScript (डेटा मॅपिंग)
     ====================================== -->
     <script type="module">
-        // Firebase मॉड्यूल्स इम्पोर्ट करणे
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // तुमची Firebase Config इथे टाका
         const firebaseConfig = {
-  apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
-  authDomain: "apex-245ed.firebaseapp.com",
-  projectId: "apex-245ed",
-  storageBucket: "apex-245ed.firebasestorage.app",
-  messagingSenderId: "1082704594683",
-  appId: "1:1082704594683:web:5c1c67afeb0eadfb68d25e"
-};
+            apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
+            authDomain: "apex-245ed.firebaseapp.com",
+            projectId: "apex-245ed",
+            storageBucket: "apex-245ed.firebasestorage.app",
+            messagingSenderId: "1082704594683",
+            appId: "1:1082704594683:web:5c1c67afeb0eadfb68d25e"
+        };
 
-        // Firebase सुरु करणे
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        auth.useDeviceLanguage(); // OTP च्या मेसेजची भाषा
+        auth.useDeviceLanguage(); 
 
-        let fetchedUserData = null; // युजरचा डेटा साठवण्यासाठी
+        let fetchedUserData = null; 
 
-        // १. Invisible reCAPTCHA सेटअप करणे
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible'
-        });
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
 
-        // २. Send OTP फंक्शन
         document.getElementById('sendOtpBtn').addEventListener('click', async () => {
             const aadhaar = document.getElementById('aadhaarInput').value;
             const mobile = document.getElementById('mobileInput').value;
@@ -262,42 +330,33 @@
             sendBtn.innerText = "Checking Record...";
 
             try {
-                // Firestore मध्ये युजर शोधणे (workers कलेक्शनमधून)
                 const workersRef = collection(db, "workers");
                 const q = query(workersRef, where("aadhaarNumber", "==", aadhaar), where("mobileNumber", "==", mobile));
                 const querySnapshot = await getDocs(q);
 
                 if (querySnapshot.empty) {
-                    alert("❌No record found for this Aadhaar and mobile number! Please check your information");
+                    alert("❌ No record found! Please check your information.");
                     sendBtn.disabled = false;
                     sendBtn.innerText = "Send OTP";
                     return;
                 }
 
-                // रेकॉर्ड सापडल्यास डेटा साठवून ठेवणे
                 fetchedUserData = querySnapshot.docs[0].data();
-
-                // OTP पाठवणे
                 sendBtn.innerText = "Sending OTP...";
                 const phoneNumber = "+91" + mobile;
-                const appVerifier = window.recaptchaVerifier;
 
-                signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
                     .then((confirmationResult) => {
                         window.confirmationResult = confirmationResult;
-                        alert("✅An OTP has been sent to your mobile number.");
-                        
-                        // OTP चा बॉक्स दाखवणे
+                        alert("✅ An OTP has been sent to your mobile number.");
                         document.getElementById('otpBox').style.display = "block";
-                        sendBtn.style.display = "none"; // Send बटण लपवणे
-                        
-                        // सिक्युरिटीसाठी आधार आणि मोबाईल फील्ड लॉक करणे
+                        sendBtn.style.display = "none";
                         document.getElementById('aadhaarInput').disabled = true;
                         document.getElementById('mobileInput').disabled = true;
                     })
                     .catch((error) => {
                         console.error("OTP Error:", error);
-                        alert("❌ Please refresh the page and try again.");
+                        alert("❌ Error sending OTP. Please refresh.");
                         sendBtn.disabled = false;
                         sendBtn.innerText = "Send OTP";
                     });
@@ -310,7 +369,6 @@
             }
         });
 
-        // ३. Verify OTP फंक्शन
         document.getElementById('verifyOtpBtn').addEventListener('click', () => {
             const otp = document.getElementById('otpInput').value;
             const verifyBtn = document.getElementById('verifyOtpBtn');
@@ -324,50 +382,235 @@
             verifyBtn.innerText = "Verifying...";
 
             window.confirmationResult.confirm(otp).then((result) => {
-                // OTP यशस्वीरीत्या व्हेरिफाय झाला!
                 showProfilePage();
             }).catch((error) => {
-                alert("❌Invalid OTP! Please try again.");
+                alert("❌ Invalid OTP! Please try again.");
                 verifyBtn.disabled = false;
                 verifyBtn.innerText = "Verify & Login";
             });
         });
 
-        // ४. डेटा मॅप करून Profile View दाखवणे
+        // ==========================================
+        // ४. नवीन प्रोफाईल डिझाईनमध्ये डेटा भरणे
+        // ==========================================
         function showProfilePage() {
-            // लॉगिन बॉक्स लपवणे आणि प्रोफाईल बॉक्स दाखवणे
             document.getElementById('loginSection').style.display = "none";
             document.getElementById('profileSection').style.display = "block";
 
             let data = fetchedUserData;
 
-            // सुरक्षिततेसाठी आधार नंबरचे शेवटचे ४ अंकच दाखवणे
-            let maskedAadhaar = "XXXX-XXXX-" + data.aadhaarNumber.slice(-4);
+            // आधार नंबर सुरक्षित करण्यासाठी (फक्त शेवटचे ४ अंक दिसतील)
+            let maskedAadhaar = data.aadhaarNumber ? "XXXXXXXX" + data.aadhaarNumber.slice(-4) : "N/A";
 
-            // डेटा HTML मध्ये भरणे
-            document.getElementById('profPhoto').src = data.profilePhoto || "https://via.placeholder.com/100";
+            // डेटा HTML मध्ये मॅप करणे
+            document.getElementById('profPhoto').src = data.profilePhoto || "https://via.placeholder.com/220x260?text=No+Photo";
             document.getElementById('profName').innerText = data.fullName || "N/A";
-            document.getElementById('profRole').innerText = data.userRole || data.ageCategory;
-            document.getElementById('profStatus').innerText = "Status: " + (data.status || "Pending");
+            document.getElementById('profMobile').innerText = "+91 " + (data.mobileNumber || "N/A");
             
-            document.getElementById('profMobile').innerText = "+91 " + data.mobileNumber;
-            document.getElementById('profAadhaar').innerText = maskedAadhaar; // सुरक्षित आधार
-            document.getElementById('profAge').innerText = (data.age || "") + " (" + (data.dob || "") + ")";
-            document.getElementById('profWork').innerText = data.workType || data.standard || "N/A";
-            document.getElementById('profLocation').innerText = (data.village || "") + ", " + (data.district || "");
-            document.getElementById('profUtr').innerText = data.utrNumber || "N/A";
+            // जन्मतारीख आणि वय
+            document.getElementById('profDob').innerText = data.dob || "N/A"; // Date format DD-MM-YYYY असावा
+            document.getElementById('profAge').innerText = data.age || "N/A";
+            
+            document.getElementById('profGender').innerText = data.gender || "N/A";
+            document.getElementById('profMarital').innerText = data.maritalStatus || "N/A";
+            
+            document.getElementById('profAadhaar').innerText = maskedAadhaar;
+            document.getElementById('profCast').innerText = data.casteCategory || data.cast || "N/A"; // Cast
+            
+            document.getElementById('profRegNo').innerText = data.regNo || "N/A";
+            
+            // ठिकाण 
+            document.getElementById('profLocation').innerText = (data.village || "") + " " + (data.district || "N/A");
 
-            // डॉक्युमेंट्स तपासणे
+            // डॉक्युमेंट्स लिस्ट आणि View बटन बनवणे
             let docsHtml = "";
-            if(data.hasAadhaarDoc) docsHtml += "✅ Aadhaar Card<br>";
-            if(data.hasConsentDoc) docsHtml += "✅ Parental Consent Form<br>";
-            if(data.hasLicenseDoc) docsHtml += "✅ License/Certificate<br>";
             
-            if(docsHtml === "") {
-                docsHtml = "❌No document attached.";
+            // उदाहरणासाठी: जर डेटाबेस मध्ये डॉक्युमेंट ची लिंक असेल तर ती ओपन होईल
+            if(data.aadhaarDocUrl) {
+                docsHtml += `<div class="doc-item"><span class="doc-name">✅ Aadhaar Card</span> <a href="${data.aadhaarDocUrl}" target="_blank" class="view-btn">View</a></div>`;
+            } else if(data.hasAadhaarDoc) {
+                 docsHtml += `<div class="doc-item"><span class="doc-name">✅ Aadhaar Card</span> <span style="color:red; font-size:12px;">Link Not Found</span></div>`;
             }
-            document.getElementById('profDocs').innerHTML = docsHtml;
+
+            if(data.consentDocUrl) {
+                docsHtml += `<div class="doc-item"><span class="doc-name">✅ Parental Consent Form</span> <a href="${data.consentDocUrl}" target="_blank" class="view-btn">View</a></div>`;
+            }
+            
+            if(data.licenseDocUrl) {
+                docsHtml += `<div class="doc-item"><span class="doc-name">✅ Work License/Certificate</span> <a href="${data.licenseDocUrl}" target="_blank" class="view-btn">View</a></div>`;
+            }
+
+            // जर कोणतेच डॉक्युमेंट नसतील
+            if(docsHtml === "") {
+                docsHtml = "<div style='padding: 10px; color: #777;'>No documents uploaded yet.</div>";
+            }
+            
+            document.getElementById('profDocsList').innerHTML = docsHtml;
         }
+        // ==========================================
+// 5. Advanced Government Schemes Filter Engine
+// ==========================================
+const findSchemesBtn = document.getElementById('findSchemesBtn');
+const schemesListDiv = document.getElementById('schemesList');
+
+findSchemesBtn.onclick = function() {
+    findSchemesBtn.innerText = "Finding Schemes...";
+    findSchemesBtn.disabled = true;
+
+    let data = fetchedUserData || {}; 
+
+    // कामगाराची माहिती मिळवणे आणि फॉरमॅट करणे
+    let age = parseInt(data.age) || 30; 
+    let gender = (data.gender || "male").toLowerCase();
+    let cast = (data.casteCategory || data.cast || "open").toLowerCase();
+    let state = "maharashtra"; // Default for BOCW
+    
+    // अटी (Conditions as per your rule)
+    let incomeLessThan1Lakh = true; 
+    let hasYellowOrOrangeRationCard = true;
+
+    // --- ॲडव्हान्स्ड योजनांचा डेटाबेस (Master Database) ---
+    const schemeDatabase = [
+        {
+            name: "Ayushman Bharat Scheme (PM-JAY)",
+            desc: "Provides health coverage up to ₹5 Lakhs per family per year.",
+            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Mahatma Jyotirao Phule Jan Arogya Yojana",
+            desc: "Free medical facilities for Yellow/Orange ration card holders.",
+            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Pradhan Mantri Shram Yogi Maandhan (PM-SYM)",
+            desc: "Assured pension of ₹3,000/month after the age of 60.",
+            criteria: { minAge: 18, maxAge: 40, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Maharashtra BOCW Welfare Board Schemes",
+            desc: "Financial assistance for education, marriage, and safety kits for construction workers.",
+            criteria: { minAge: 18, maxAge: 60, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Pradhan Mantri Awas Yojana (PMAY - Gramin/Urban)",
+            desc: "Financial assistance for building a permanent house.",
+            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Lek Ladki Yojana (Maharashtra)",
+            desc: "Financial assistance for girls born in yellow/orange ration card holder families.",
+            criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
+        },
+        {
+            name: "Mazi Kanya Bhagyashree Scheme",
+            desc: "Financial incentives for retaining girls in schools and promoting their health.",
+            criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
+        },
+        {
+            name: "Ramai Awas Yojana",
+            desc: "Housing scheme specifically for SC/ST category people.",
+            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st", "neo-buddhist"] }
+        },
+        {
+            name: "Shabari Awas Yojana",
+            desc: "Housing scheme specifically for Scheduled Tribes (ST).",
+            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["st"] }
+        },
+        {
+            name: "Shravanbal Seva Rajya Nivruttivetan Yojana",
+            desc: "Monthly pension for senior citizens.",
+            criteria: { minAge: 65, maxAge: 120, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "Stand-Up India Scheme",
+            desc: "Bank loans for setting up a greenfield enterprise (SC/ST/Women).",
+            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st"] }
+        },
+        // ===== नवीन ॲड केलेल्या योजना (New Schemes Added) =====
+        {
+            name: "Mukhyamantri Majhi Ladki Bahin Yojana",
+            desc: "Financial assistance of ₹1500 per month for eligible women in Maharashtra.",
+            criteria: { minAge: 21, maxAge: 65, gender: "female", cast: ["all"] }
+        },
+        {
+            name: "Pradhan Mantri Ujjwala Yojana (PMUY)",
+            desc: "Provides free LPG gas connections to women of BPL families.",
+            criteria: { minAge: 18, maxAge: 100, gender: "female", cast: ["all"] }
+        },
+        {
+            name: "Sukanya Samriddhi Yojana",
+            desc: "Small deposit scheme for the girl child to build a fund for her education and marriage.",
+            criteria: { minAge: 0, maxAge: 10, gender: "female", cast: ["all"] } // वयोमर्यादा १० वर्षांपर्यंत असते 
+        },
+        {
+            name: "Sanjay Gandhi Niradhar Anudan Yojana",
+            desc: "Financial assistance to destitutes, blind, disabled, orphans, and widows.",
+            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+        },
+        {
+            name: "PM Kisan Samman Nidhi Yojana",
+            desc: "Income support of ₹6,000 per year to all landholding farmer families.",
+            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
+        }
+    ];
+
+    // --- ऑटोमॅटिक फिल्टर लॉजिक (Automatic Filtering) ---
+    let applicableSchemes = schemeDatabase.filter(scheme => {
+        let match = true;
+
+        // 1. वयाची अट (Age Check)
+        if (age < scheme.criteria.minAge || age > scheme.criteria.maxAge) { match = false; }
+
+        // 2. लिंगाची अट (Gender Check)
+        if (scheme.criteria.gender !== "all") {
+            if (gender === 'f' || gender === 'female' || gender === 'स्त्री') {
+                if (scheme.criteria.gender !== "female") match = false;
+            } else {
+                if (scheme.criteria.gender !== "male") match = false;
+            }
+        }
+
+        // 3. जातीची अट (Caste Check)
+        if (!scheme.criteria.cast.includes("all")) {
+            let isCasteEligible = false;
+            scheme.criteria.cast.forEach(c => {
+                if (cast.includes(c)) isCasteEligible = true;
+            });
+            if (!isCasteEligible) match = false;
+        }
+
+        return match;
+    });
+
+    // थोडा वेळ (Loading Effect) दाखवून योजना प्रिंट करणे
+    setTimeout(() => {
+        let totalSchemesCount = applicableSchemes.length;
+        
+        let htmlStr = `<div style='background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; font-weight: bold; font-size: 16px; margin-bottom: 15px;'>
+                        ✅ You are eligible for <span style="font-size: 20px; color: #d32f2f;">${totalSchemesCount}</span> Government Schemes!
+                       </div>`;
+        
+        htmlStr += "<ul style='padding-left: 20px; line-height: 1.6;'>";
+        
+        if(totalSchemesCount > 0) {
+            applicableSchemes.forEach(s => {
+                htmlStr += `<li style="margin-bottom: 12px;">
+                                <strong style="color: #0b2545; font-size: 15px;">${s.name}</strong><br>
+                                <span style="font-size: 13px; color: #444;">${s.desc}</span>
+                            </li>`;
+            });
+        } else {
+            htmlStr += `<li style="margin-bottom: 12px; color: red;">No schemes found based on your current profile.</li>`;
+        }
+        
+        htmlStr += "</ul>";
+        htmlStr += "<p style='font-size: 11px; color: #888; margin-top:15px;'>* Note: Schemes are filtered assuming Annual Income < ₹1L and possession of Yellow/Orange Ration Card. Verification required at official govt portals.</p>";
+        
+        schemesListDiv.innerHTML = htmlStr;
+        schemesListDiv.style.display = "block";
+        findSchemesBtn.style.display = "none"; // बटन लपवणे
+    }, 1200); // 1.2 सेकंद लोडिंग इफेक्ट
+};
     </script>
 </body>
 </html>
