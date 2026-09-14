@@ -307,9 +307,8 @@ body {
 }
 /* Google Translate Widget ची स्टाईल */
 #google_translate_element {
-    margin-left: 20px;
-    margin-top: 5px;
-    display: inline-block;
+    
+    display: none;
 }
 
 /* गुगल ट्रान्सलेटचा वरचा पांढरा पॉप-अप बार (Banner) लपवण्यासाठी */
@@ -394,8 +393,8 @@ html, body {
     
     /* गुगल ट्रान्सलेट विजेट मोबाईलवर मध्यभागी दिसावे म्हणून */
     #google_translate_element {
-        margin: 10px auto;
-        display: block;
+        
+        display: none;
     }
 }
 /* =========================================

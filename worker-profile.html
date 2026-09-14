@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worker Profile - APEX Manpower</title>
-    
+    <link rel="icon" type="image/png" href="Apex.logo.png">
     <style>
         /* =====================================
            १. CSS - ग्लोबल डिझाईन
@@ -448,169 +448,190 @@
             document.getElementById('profDocsList').innerHTML = docsHtml;
         }
         // ==========================================
-// 5. Advanced Government Schemes Filter Engine
 // ==========================================
-const findSchemesBtn = document.getElementById('findSchemesBtn');
-const schemesListDiv = document.getElementById('schemesList');
+        // 5. Advanced Government Schemes Filter Engine
+        // ==========================================
+        const findSchemesBtn = document.getElementById('findSchemesBtn');
+        const schemesListDiv = document.getElementById('schemesList');
 
-findSchemesBtn.onclick = function() {
-    findSchemesBtn.innerText = "Finding Schemes...";
-    findSchemesBtn.disabled = true;
+        findSchemesBtn.onclick = function() {
+            findSchemesBtn.innerText = "Finding Schemes...";
+            findSchemesBtn.disabled = true;
 
-    let data = fetchedUserData || {}; 
+            let data = fetchedUserData || {}; 
 
-    // कामगाराची माहिती मिळवणे आणि फॉरमॅट करणे
-    let age = parseInt(data.age) || 30; 
-    let gender = (data.gender || "male").toLowerCase();
-    let cast = (data.casteCategory || data.cast || "open").toLowerCase();
-    let state = "maharashtra"; // Default for BOCW
-    
-    // अटी (Conditions as per your rule)
-    let incomeLessThan1Lakh = true; 
-    let hasYellowOrOrangeRationCard = true;
+            // कामगाराची माहिती मिळवणे आणि फॉरमॅट करणे
+            let age = parseInt(data.age) || 30; 
+            let gender = (data.gender || "male").toLowerCase();
+            let cast = (data.casteCategory || data.cast || "open").toLowerCase();
+            let state = "maharashtra"; // Default for BOCW
+            
+            // अटी (Conditions as per your rule)
+            let incomeLessThan1Lakh = true; 
+            let hasYellowOrOrangeRationCard = true;
 
-    // --- ॲडव्हान्स्ड योजनांचा डेटाबेस (Master Database) ---
-    const schemeDatabase = [
-        {
-            name: "Ayushman Bharat Scheme (PM-JAY)",
-            desc: "Provides health coverage up to ₹5 Lakhs per family per year.",
-            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Mahatma Jyotirao Phule Jan Arogya Yojana",
-            desc: "Free medical facilities for Yellow/Orange ration card holders.",
-            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Pradhan Mantri Shram Yogi Maandhan (PM-SYM)",
-            desc: "Assured pension of ₹3,000/month after the age of 60.",
-            criteria: { minAge: 18, maxAge: 40, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Maharashtra BOCW Welfare Board Schemes",
-            desc: "Financial assistance for education, marriage, and safety kits for construction workers.",
-            criteria: { minAge: 18, maxAge: 60, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Pradhan Mantri Awas Yojana (PMAY - Gramin/Urban)",
-            desc: "Financial assistance for building a permanent house.",
-            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Lek Ladki Yojana (Maharashtra)",
-            desc: "Financial assistance for girls born in yellow/orange ration card holder families.",
-            criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
-        },
-        {
-            name: "Mazi Kanya Bhagyashree Scheme",
-            desc: "Financial incentives for retaining girls in schools and promoting their health.",
-            criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
-        },
-        {
-            name: "Ramai Awas Yojana",
-            desc: "Housing scheme specifically for SC/ST category people.",
-            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st", "neo-buddhist"] }
-        },
-        {
-            name: "Shabari Awas Yojana",
-            desc: "Housing scheme specifically for Scheduled Tribes (ST).",
-            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["st"] }
-        },
-        {
-            name: "Shravanbal Seva Rajya Nivruttivetan Yojana",
-            desc: "Monthly pension for senior citizens.",
-            criteria: { minAge: 65, maxAge: 120, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "Stand-Up India Scheme",
-            desc: "Bank loans for setting up a greenfield enterprise (SC/ST/Women).",
-            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st"] }
-        },
-        // ===== नवीन ॲड केलेल्या योजना (New Schemes Added) =====
-        {
-            name: "Mukhyamantri Majhi Ladki Bahin Yojana",
-            desc: "Financial assistance of ₹1500 per month for eligible women in Maharashtra.",
-            criteria: { minAge: 21, maxAge: 65, gender: "female", cast: ["all"] }
-        },
-        {
-            name: "Pradhan Mantri Ujjwala Yojana (PMUY)",
-            desc: "Provides free LPG gas connections to women of BPL families.",
-            criteria: { minAge: 18, maxAge: 100, gender: "female", cast: ["all"] }
-        },
-        {
-            name: "Sukanya Samriddhi Yojana",
-            desc: "Small deposit scheme for the girl child to build a fund for her education and marriage.",
-            criteria: { minAge: 0, maxAge: 10, gender: "female", cast: ["all"] } // वयोमर्यादा १० वर्षांपर्यंत असते 
-        },
-        {
-            name: "Sanjay Gandhi Niradhar Anudan Yojana",
-            desc: "Financial assistance to destitutes, blind, disabled, orphans, and widows.",
-            criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
-        },
-        {
-            name: "PM Kisan Samman Nidhi Yojana",
-            desc: "Income support of ₹6,000 per year to all landholding farmer families.",
-            criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
-        }
-    ];
+            // --- ॲडव्हान्स्ड योजनांचा डेटाबेस (Master Database) ---
+            const schemeDatabase = [
+                {
+                    name: "Ayushman Bharat Scheme (PM-JAY)",
+                    desc: "Provides health coverage up to ₹5 Lakhs per family per year.",
+                    link: "https://pmjay.gov.in/",
+                    criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Mahatma Jyotirao Phule Jan Arogya Yojana",
+                    desc: "Free medical facilities for Yellow/Orange ration card holders.",
+                    link: "https://www.jeevandayee.gov.in/",
+                    criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Pradhan Mantri Shram Yogi Maandhan (PM-SYM)",
+                    desc: "Assured pension of ₹3,000/month after the age of 60.",
+                    link: "https://maandhan.in/",
+                    criteria: { minAge: 18, maxAge: 40, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Maharashtra BOCW Welfare Board Schemes",
+                    desc: "Financial assistance for education, marriage, and safety kits for construction workers.",
+                    link: "https://mahabocw.in/",
+                    criteria: { minAge: 18, maxAge: 60, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Pradhan Mantri Awas Yojana (PMAY - Gramin/Urban)",
+                    desc: "Financial assistance for building a permanent house.",
+                    link: "https://pmaymis.gov.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Lek Ladki Yojana (Maharashtra)",
+                    desc: "Financial assistance for girls born in yellow/orange ration card holder families.",
+                    link: "https://womenchild.maharashtra.gov.in/",
+                    criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
+                },
+                {
+                    name: "Mazi Kanya Bhagyashree Scheme",
+                    desc: "Financial incentives for retaining girls in schools and promoting their health.",
+                    link: "https://womenchild.maharashtra.gov.in/",
+                    criteria: { minAge: 0, maxAge: 18, gender: "female", cast: ["all"] }
+                },
+                {
+                    name: "Ramai Awas Yojana",
+                    desc: "Housing scheme specifically for SC/ST category people.",
+                    link: "https://sjsa.maharashtra.gov.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st", "neo-buddhist"] }
+                },
+                {
+                    name: "Shabari Awas Yojana",
+                    desc: "Housing scheme specifically for Scheduled Tribes (ST).",
+                    link: "https://tribal.maharashtra.gov.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["st"] }
+                },
+                {
+                    name: "Shravanbal Seva Rajya Nivruttivetan Yojana",
+                    desc: "Monthly pension for senior citizens.",
+                    link: "https://sjsa.maharashtra.gov.in/",
+                    criteria: { minAge: 65, maxAge: 120, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "Stand-Up India Scheme",
+                    desc: "Bank loans for setting up a greenfield enterprise (SC/ST/Women).",
+                    link: "https://www.standupmitra.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["sc", "st"] }
+                },
+                {
+                    name: "Mukhyamantri Majhi Ladki Bahin Yojana",
+                    desc: "Financial assistance of ₹1500 per month for eligible women in Maharashtra.",
+                    link: "https://ladkibahin.maharashtra.gov.in/",
+                    criteria: { minAge: 21, maxAge: 65, gender: "female", cast: ["all"] }
+                },
+                {
+                    name: "Pradhan Mantri Ujjwala Yojana (PMUY)",
+                    desc: "Provides free LPG gas connections to women of BPL families.",
+                    link: "https://www.pmuy.gov.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "female", cast: ["all"] }
+                },
+                {
+                    name: "Sukanya Samriddhi Yojana",
+                    desc: "Small deposit scheme for the girl child to build a fund for her education and marriage.",
+                    link: "https://www.indiapost.gov.in/",
+                    criteria: { minAge: 0, maxAge: 10, gender: "female", cast: ["all"] }
+                },
+                {
+                    name: "Sanjay Gandhi Niradhar Anudan Yojana",
+                    desc: "Financial assistance to destitutes, blind, disabled, orphans, and widows.",
+                    link: "https://sjsa.maharashtra.gov.in/",
+                    criteria: { minAge: 0, maxAge: 100, gender: "all", cast: ["all"] }
+                },
+                {
+                    name: "PM Kisan Samman Nidhi Yojana",
+                    desc: "Income support of ₹6,000 per year to all landholding farmer families.",
+                    link: "https://pmkisan.gov.in/",
+                    criteria: { minAge: 18, maxAge: 100, gender: "all", cast: ["all"] }
+                }
+            ];
 
-    // --- ऑटोमॅटिक फिल्टर लॉजिक (Automatic Filtering) ---
-    let applicableSchemes = schemeDatabase.filter(scheme => {
-        let match = true;
+            // --- ऑटोमॅटिक फिल्टर लॉजिक (Automatic Filtering) ---
+            let applicableSchemes = schemeDatabase.filter(scheme => {
+                let match = true;
 
-        // 1. वयाची अट (Age Check)
-        if (age < scheme.criteria.minAge || age > scheme.criteria.maxAge) { match = false; }
+                // 1. वयाची अट (Age Check)
+                if (age < scheme.criteria.minAge || age > scheme.criteria.maxAge) { match = false; }
 
-        // 2. लिंगाची अट (Gender Check)
-        if (scheme.criteria.gender !== "all") {
-            if (gender === 'f' || gender === 'female' || gender === 'स्त्री') {
-                if (scheme.criteria.gender !== "female") match = false;
-            } else {
-                if (scheme.criteria.gender !== "male") match = false;
-            }
-        }
+                // 2. लिंगाची अट (Gender Check)
+                if (scheme.criteria.gender !== "all") {
+                    if (gender === 'f' || gender === 'female' || gender === 'स्त्री') {
+                        if (scheme.criteria.gender !== "female") match = false;
+                    } else {
+                        if (scheme.criteria.gender !== "male") match = false;
+                    }
+                }
 
-        // 3. जातीची अट (Caste Check)
-        if (!scheme.criteria.cast.includes("all")) {
-            let isCasteEligible = false;
-            scheme.criteria.cast.forEach(c => {
-                if (cast.includes(c)) isCasteEligible = true;
+                // 3. जातीची अट (Caste Check)
+                if (!scheme.criteria.cast.includes("all")) {
+                    let isCasteEligible = false;
+                    scheme.criteria.cast.forEach(c => {
+                        if (cast.includes(c)) isCasteEligible = true;
+                    });
+                    if (!isCasteEligible) match = false;
+                }
+
+                return match;
             });
-            if (!isCasteEligible) match = false;
-        }
 
-        return match;
-    });
-
-    // थोडा वेळ (Loading Effect) दाखवून योजना प्रिंट करणे
-    setTimeout(() => {
-        let totalSchemesCount = applicableSchemes.length;
-        
-        let htmlStr = `<div style='background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; font-weight: bold; font-size: 16px; margin-bottom: 15px;'>
-                        ✅ You are eligible for <span style="font-size: 20px; color: #d32f2f;">${totalSchemesCount}</span> Government Schemes!
-                       </div>`;
-        
-        htmlStr += "<ul style='padding-left: 20px; line-height: 1.6;'>";
-        
-        if(totalSchemesCount > 0) {
-            applicableSchemes.forEach(s => {
-                htmlStr += `<li style="margin-bottom: 12px;">
-                                <strong style="color: #0b2545; font-size: 15px;">${s.name}</strong><br>
-                                <span style="font-size: 13px; color: #444;">${s.desc}</span>
-                            </li>`;
-            });
-        } else {
-            htmlStr += `<li style="margin-bottom: 12px; color: red;">No schemes found based on your current profile.</li>`;
-        }
-        
-        htmlStr += "</ul>";
-        htmlStr += "<p style='font-size: 11px; color: #888; margin-top:15px;'>* Note: Schemes are filtered assuming Annual Income < ₹1L and possession of Yellow/Orange Ration Card. Verification required at official govt portals.</p>";
-        
-        schemesListDiv.innerHTML = htmlStr;
-        schemesListDiv.style.display = "block";
-        findSchemesBtn.style.display = "none"; // बटन लपवणे
-    }, 1200); // 1.2 सेकंद लोडिंग इफेक्ट
-};
+            // थोडा वेळ (Loading Effect) दाखवून योजना प्रिंट करणे
+            setTimeout(() => {
+                let totalSchemesCount = applicableSchemes.length;
+                
+                let htmlStr = `<div style='background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; font-weight: bold; font-size: 16px; margin-bottom: 15px;'>
+                                ✅ You are eligible for <span style="font-size: 20px; color: #d32f2f;">${totalSchemesCount}</span> Government Schemes!
+                               </div>`;
+                
+                htmlStr += "<ul style='padding-left: 20px; line-height: 1.6;'>";
+                
+                if(totalSchemesCount > 0) {
+                    // इथे आपण लिंक असलेला योग्य कोड टाकला आहे
+                    applicableSchemes.forEach(s => {
+                        htmlStr += `<li style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #ccc;">
+                                        <strong style="color: #0b2545; font-size: 15px;">${s.name}</strong><br>
+                                        <span style="font-size: 13px; color: #444;">${s.desc}</span><br>
+                                        <a href="${s.link}" target="_blank" style="display: inline-block; margin-top: 5px; font-size: 12px; color: #007bff; text-decoration: none; font-weight: bold;">👉 Click to Apply / Info</a>
+                                    </li>`;
+                    });
+                } else {
+                    htmlStr += `<li style="margin-bottom: 12px; color: red;">No schemes found based on your current profile.</li>`;
+                }
+                
+                htmlStr += "</ul>";
+                htmlStr += "<p style='font-size: 11px; color: #888; margin-top:15px;'>* Note: Schemes are filtered assuming Annual Income < ₹1L and possession of Yellow/Orange Ration Card. Verification required at official govt portals.</p>";
+                
+                schemesListDiv.innerHTML = htmlStr;
+                schemesListDiv.style.display = "block";
+                findSchemesBtn.style.display = "none"; // बटन लपवणे
+            }, 1200); // 1.2 सेकंद लोडिंग इफेक्ट
+        };
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>

@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Worker Apply Form</title>
+    <link rel="icon" type="image/png" href="Apex.logo.png">3
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App & Firestore CDN v10.8.0 -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <style>
         /* =====================================
            १. बेसिक आणि फॉर्म लेआउट स्टाईल (CSS)
@@ -257,10 +259,20 @@
             </div>
 
             <div class="form-grid">
-                <!-- २. पूर्ण नाव -->
-                <div class="form-group full-width">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" placeholder="" required>
+                <!-- २. नाव (First, Middle, Surname) -->
+                <div class="form-group">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" placeholder="First Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="middleName">Middle Name *</label>
+                    <input type="text" id="middleName" placeholder="Middle Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="surname">Surname / Last Name *</label>
+                    <input type="text" id="surname" placeholder="Surname" required>
                 </div>
                 <!-- नवीन: लिंग (Gender) -->
                 <div class="form-group">
@@ -319,9 +331,10 @@
 
                 <!-- ६. पिनकोड -->
                 <div class="form-group">
-                    <label for="pincode">Pincode</label>
-                    <input type="text" id="pincode" maxlength="6" pattern="\d{6}" placeholder="6 Number Pincode" oninput="fetchLocationDetails()" required>
-                    <small id="pincodeMsg" style="color:red; font-size:12px; display:none;">Pin Number is wrong</small>
+                    <label for="pincode">Pincode *</label>
+                    <!-- युजरला फक्त आकडे (Numbers) टाकण्याची परवानगी देण्यासाठी oninput मध्ये बदल केला आहे -->
+                    <input type="text" id="pincode" maxlength="6" placeholder="उदा. 412210" oninput="this.value = this.value.replace(/[^0-9]/g, ''); fetchLocationDetails();" required>
+                    <small id="pincodeMsg" style="color:red; font-size:12px; display:none;">**Please enter a valid 6-digit Pincode.**</small>
                 </div>
 
                 <!-- ७. गाव / शहर -->
@@ -384,7 +397,7 @@
                     
                     <!-- १. PEN Number (School Name काढून हा नवीन कॉलम टाकला आहे) -->
                     <div class="form-group">
-                        <label for="penNumber">PEN Number (Permanent Education Number) *</label>
+                        <label for="penNumber">PEN Number (Permanent Education Number)</label>
                         <input type="text" id="penNumber" placeholder="">
                     </div>
                     
@@ -432,6 +445,11 @@
                         <label style="cursor: pointer;"><input type="radio" name="userRole" value="Worker" onchange="toggleAdultSections()"> Worker</label>
                         <label style="cursor: pointer;"><input type="radio" name="userRole" value="Both" onchange="toggleAdultSections()">Both</label>
                     </div>
+                    <!-- नवीन: १८-५९ वयासाठी कॉमन आधार कार्ड अपलोड बॉक्स -->
+                    <div class="form-group full-width" style="background-color: white; padding: 15px; border-radius: 6px; border: 1px solid #ccc; margin-top: 15px;">
+                        <label for="adultAadhaarDoc" style="font-weight: bold; color: #0b2545; margin-bottom: 8px; display: block;">Upload Aadhaar Card 2 Side *</label>
+                        <input type="file" id="adultAadhaarDoc" accept=".pdf, .jpg, .jpeg, .png" style="width: 100%;">
+                    </div>
 
                     <!-- २. Student सेक्शन -->
                     <div id="subSectionStudent" class="form-grid full-width" style="display: none; margin-top: 10px; padding: 15px; border: 1px dashed #4caf50; border-radius: 6px; background-color: #f1f8e9;">
@@ -443,10 +461,6 @@
                         <div class="form-group">
                             <label for="adultStandard">Standard/Education) *</label>
                             <input type="text" id="adultStandard" placeholder="">
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="adultAadhaarDoc">Upload Aadhaar Card 2 Side*</label>
-                            <input type="file" id="adultAadhaarDoc" accept=".pdf, .jpg, .jpeg, .png">
                         </div>
                     </div>
 
@@ -508,7 +522,7 @@
     <div id="qrModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Payment Required</h3>
-            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Please pay <strong>₹50</strong> to complete registration.</p>
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Please pay <strong>₹199</strong> to complete registration.</p>
             
             <!-- येथे QR कोड जनरेट होईल -->
             <img id="qrCodeImg" class="qr-image" src="UPI.jpeg" alt="UPI QR Code">
@@ -618,6 +632,7 @@
             let sectionTrainee = document.getElementById('sectionTrainee');
             let sectionAdult = document.getElementById('sectionAdult');
             let sectionSenior = document.getElementById('sectionSenior'); // ही ओळ ॲड केली आहे
+            let adultAadhaarInput = document.getElementById('adultAadhaarDoc'); // आधार कार्ड इनपुट मिळवणे
 
             // जन्मतारीख बदलल्यावर जुने सेक्शन्स आणि नोटीस लपवा (Reset)
             if(noticeBox) noticeBox.style.display = "none";
@@ -626,6 +641,7 @@
             if(sectionAdult) sectionAdult.style.display = "none";
             if(sectionSenior) sectionSenior.style.display = "none"; // ही ओळ ॲड केली आहे
             if(ageCategoryField) ageCategoryField.value = "";
+            if(adultAadhaarInput) adultAadhaarInput.required = false; // सुरुवातीला required बंद ठेवणे
 
             if (dobInput) {
                 let dob = new Date(dobInput);
@@ -675,6 +691,7 @@
                         noticeBox.style.borderColor = "#a5d6a7";
                         noticeBox.style.display = "block";
                         sectionAdult.style.display = "grid"; 
+                        if(adultAadhaarInput) adultAadhaarInput.required = true; // फक्त या वयोगटासाठी आधार सक्तीचे करणे
 
                     } else if (age >= 60) {
                         // ६०+ चे लॉजिक जे तुमच्या कोडमध्ये मिसिंग होते
@@ -691,6 +708,7 @@
                 ageField.value = "";
             }
         }
+        // ४. १८-५९ वयोगटातील रेडिओ बटन्सनुसार Student/Worker सेक्शन्स दाखवणे
         // ४. १८-५९ वयोगटातील रेडिओ बटन्सनुसार Student/Worker सेक्शन्स दाखवणे
         function toggleAdultSections() {
             let role = document.querySelector('input[name="userRole"]:checked');
@@ -717,37 +735,32 @@
             let otherWorkTypeBox = document.getElementById('otherWorkTypeBox');
 
             if (workType === "Other") {
-                otherWorkTypeBox.style.display = "flex"; // दाखवण्यासाठी 
+                otherWorkTypeBox.style.display = "flex"; 
             } else {
-                otherWorkTypeBox.style.display = "none"; // लपवण्यासाठी
+                otherWorkTypeBox.style.display = "none"; 
             }
         }
-        // ६. QR Code Modal आणि Payment लॉजिक
+
+        // ६. फॉर्म सबमिट झाल्यावर पेज रिफ्रेश थांबवणे आणि QR Modal दाखवणे
         let form = document.getElementById('smartWorkerForm');
         let qrModal = document.getElementById('qrModal');
-        let qrCodeImg = document.getElementById('qrCodeImg');
 
-        // जेव्हा युजर फॉर्म सबमिट करेल
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // फॉर्म डायरेक्ट रिफ्रेश/सबमिट होण्यापासून थांबवा
-            
-            // UPI Link Generation (₹50 Fixed)
-            let upiId = "sanjanaarne@oksbi"; // तुमचा खरा UPI ID इथे टाका (उदा. 9876543210@ybl)
-            let payeeName = "APEX Manpower Service";
-            let amount = "50";
-            
-            // UPI URL फॉरमॅट
-            let upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR`;
-            
-            // api.qrserver.com वापरून डायनॅमिक QR लिंक बनवणे
-            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
-            
-            // Modal मध्ये QR कोड दाखवणे आणि Modal ओपन करणे
-            qrCodeImg.src = qrApiUrl;
-            qrModal.style.display = "flex";
-        });
-
-       // जेव्हा युजर पेमेंट करून 'Done' वर क्लिक करेल (UTR Validation सह)
+        if(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // पेज रिफ्रेश थांबवते
+                
+                // --- नवीन: आपोआप 199 रुपयांचा QR कोड तयार करण्याचे लॉजिक ---
+                let upiId = "sanjanaarne@oksbi"; // तुमचा खरा UPI ID
+                let payeeName = "APEX Manpower Service";
+                let amount = "199"; // इथे आपण 199 फिक्स केले आहेत!
+                
+                let upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR`;
+                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+                
+                document.getElementById('qrCodeImg').src = qrApiUrl; // जुन्या फोटोच्या जागी नवीन 199 चा QR टाका
+                qrModal.style.display = "flex"; // QR पॉप-अप उघडा
+            });
+        }
         // Firebase Initialize (तुमच्या दिलेल्या API Key सह)
         const firebaseConfig = {
             apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
@@ -761,13 +774,25 @@
         // Firebase सुरु करणे
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage(); // Storage सुरु केले
+
+        // फाईल Firebase Storage मध्ये अपलोड करण्यासाठी एक खास फंक्शन
+        async function uploadFileToFirebase(file, folderName) {
+            if (!file) return ""; // फाईल नसेल तर रिकामी जागा
+            let storageRef = storage.ref();
+            let fileRef = storageRef.child(folderName + '/' + Date.now() + '_' + file.name);
+            await fileRef.put(file);
+            return await fileRef.getDownloadURL(); // कायमस्वरूपी लिंक मिळवा
+        }
 
         // UTR Validation आणि Firebase मध्ये डेटा सेव्ह करण्याचे फंक्शन
-        function completePayment() {
+        // UTR Validation आणि Firebase मध्ये डेटा + फाईल्स सेव्ह करण्याचे फंक्शन
+        async function completePayment() {
             let utrInput = document.getElementById('utrNumber').value;
             let utrError = document.getElementById('utrErrorMsg');
             let qrModal = document.getElementById('qrModal');
             let form = document.getElementById('smartWorkerForm');
+            let doneBtn = document.querySelector('.done-btn'); // बटनाचा संदर्भ
 
             // UTR नंबर नक्की १२ अंकी (फक्त आकडे) आहे का तपासणे
             let utrPattern = /^\d{12}$/;
@@ -775,94 +800,107 @@
             if (utrPattern.test(utrInput)) {
                 utrError.style.display = "none"; 
                 
-                // फॉर्ममधील सर्व डेटा गोळा करणे
-                // फॉर्ममधील सर्व डेटा (A to Z) गोळा करणे
-                let roleEle = document.querySelector('input[name="userRole"]:checked');
-                
-                // प्रोफाइल फोटो Base64 मध्ये घेणे (कमी साईझचा फोटो डायरेक्ट सेव्ह होईल)
-                let profileImgSrc = document.getElementById('profileImage').src;
-                let photoData = profileImgSrc.includes('base64') ? profileImgSrc : "";
+                // अपलोड सुरु होताना बटनावर मेसेज दाखवा आणि बटन लॉक करा
+                doneBtn.innerText = "⏳ Uploading Documents... Please wait";
+                doneBtn.disabled = true;
+                doneBtn.style.backgroundColor = "#555";
 
-                let workerData = {
-                    // बेसिक माहिती
-                    fullName: document.getElementById('fullName').value,
-                    gender: document.getElementById('gender').value,
-                    casteCategory: document.getElementById('casteCategory').value,
-                    maritalStatus: document.getElementById('maritalStatus').value,
-                    aadhaarNumber: document.getElementById('aadhaar').value,
-                    aadhaarMobile: document.getElementById('aadhaarMobile').value,
-                    mobileNumber: document.getElementById('currentMobile').value,
-                    pincode: document.getElementById('pincode').value,
-                    village: document.getElementById('village').value,
-                    taluka: document.getElementById('taluka').value,
-                    district: document.getElementById('district').value,
-                    state: document.getElementById('state').value,
-                    address: document.getElementById('detailedAddress').value,
-                    dob: document.getElementById('dob').value,
-                    age: document.getElementById('age').value,
-                    ageCategory: document.getElementById('ageCategory').value,
+                try {
+                    // १. फाईल्स Firebase Storage मध्ये अपलोड करून लिंक्स (URL) मिळवणे
+                    let profilePhotoUrl = await uploadFileToFirebase(document.getElementById('photoInput').files[0], 'ProfilePhotos');
                     
-                    // --- नवीन ॲड केलेली माहिती (शिक्षण, काम, अनुभव) ---
-                    userRole: roleEle ? roleEle.value : "",
-                    penNumber: document.getElementById('penNumber') ? document.getElementById('penNumber').value : "" || document.getElementById('adultPenNumber') ? document.getElementById('adultPenNumber').value : "",
-                    standard: document.getElementById('standard') ? document.getElementById('standard').value : "" || document.getElementById('adultStandard') ? document.getElementById('adultStandard').value : "",
-                    workType: document.getElementById('adultWorkType') ? document.getElementById('adultWorkType').value : "",
-                    otherWork: document.getElementById('otherWorkName') ? document.getElementById('otherWorkName').value : "",
-                    employmentType: document.getElementById('employmentType') ? document.getElementById('employmentType').value : "",
-                    expYears: document.getElementById('expYears') ? document.getElementById('expYears').value : "",
+                    let aadhaarFile = (document.getElementById('aadhaarDoc') && document.getElementById('aadhaarDoc').files[0]) || 
+                                      (document.getElementById('adultAadhaarDoc') && document.getElementById('adultAadhaarDoc').files[0]);
+                    let aadhaarDocUrl = await uploadFileToFirebase(aadhaarFile, 'AadhaarDocs');
                     
-                    // --- फोटो आणि डॉक्युमेंट्स तपासणे ---
-                    profilePhoto: photoData,
-                    hasAadhaarDoc: (document.getElementById('aadhaarDoc') && document.getElementById('aadhaarDoc').files.length > 0) || (document.getElementById('adultAadhaarDoc') && document.getElementById('adultAadhaarDoc').files.length > 0),
-                    hasConsentDoc: document.getElementById('parentConsent') && document.getElementById('parentConsent').files.length > 0,
-                    hasLicenseDoc: document.getElementById('licenseDoc') && document.getElementById('licenseDoc').files.length > 0,
-                    
-                    utrNumber: utrInput,
-                    status: "Pending",
-                    registrationDate: new Date().toLocaleString()
-                };
+                    let consentDocUrl = await uploadFileToFirebase(document.getElementById('parentConsent') ? document.getElementById('parentConsent').files[0] : null, 'ConsentDocs');
+                    let licenseDocUrl = await uploadFileToFirebase(document.getElementById('licenseDoc') ? document.getElementById('licenseDoc').files[0] : null, 'LicenseDocs');
 
-                // Firebase Firestore मध्ये 'workers' नावाच्या Collection मध्ये डेटा पाठवणे
-                // १. आधी डेटाबेसमधील सर्वात शेवटचा 'regNo' शोधणे
-                db.collection("workers").orderBy("regNo", "desc").limit(1).get()
-                .then((snapshot) => {
-                    let nextNum = 1; // जर डेटाबेस रिकामा असेल, तर १ पासून सुरुवात होईल
-                    
+                    // २. फॉर्ममधील सर्व टेक्स्ट डेटा गोळा करणे
+                    let roleEle = document.querySelector('input[name="userRole"]:checked');
+
+                    // तिन्ही नावे घेणे
+                    let fName = document.getElementById('firstName').value;
+                    let mName = document.getElementById('middleName').value;
+                    let lName = document.getElementById('surname').value;
+
+                    let workerData = {
+                        firstName: fName,
+                        middleName: mName,
+                        surname: lName,
+                        fullName: fName + " " + mName + " " + lName, // डेटाबेसमध्ये पूर्ण नाव सुद्धा एकत्र सेव्ह होईल
+                        gender: document.getElementById('gender').value,
+                        casteCategory: document.getElementById('casteCategory').value,
+                        maritalStatus: document.getElementById('maritalStatus').value,
+                        aadhaarNumber: document.getElementById('aadhaar').value,
+                        aadhaarMobile: document.getElementById('aadhaarMobile').value,
+                        mobileNumber: document.getElementById('currentMobile').value,
+                        pincode: document.getElementById('pincode').value,
+                        village: document.getElementById('village').value,
+                        taluka: document.getElementById('taluka').value,
+                        district: document.getElementById('district').value,
+                        state: document.getElementById('state').value,
+                        address: document.getElementById('detailedAddress').value,
+                        dob: document.getElementById('dob').value,
+                        age: document.getElementById('age').value,
+                        ageCategory: document.getElementById('ageCategory').value,
+                        userRole: roleEle ? roleEle.value : "",
+                        penNumber: (document.getElementById('penNumber') && document.getElementById('penNumber').value) || (document.getElementById('adultPenNumber') && document.getElementById('adultPenNumber').value) || "",
+                        standard: (document.getElementById('standard') && document.getElementById('standard').value) || (document.getElementById('adultStandard') && document.getElementById('adultStandard').value) || "",
+                        workType: document.getElementById('adultWorkType') ? document.getElementById('adultWorkType').value : "",
+                        otherWork: document.getElementById('otherWorkName') ? document.getElementById('otherWorkName').value : "",
+                        employmentType: document.getElementById('employmentType') ? document.getElementById('employmentType').value : "",
+                        expYears: document.getElementById('expYears') ? document.getElementById('expYears').value : "",
+                        
+                        // --- डॉक्युमेंट्सच्या मिळवलेल्या लिंक्स (URLs) सेव्ह करणे ---
+                        profilePhotoUrl: profilePhotoUrl,
+                        aadhaarDocUrl: aadhaarDocUrl,
+                        consentDocUrl: consentDocUrl,
+                        licenseDocUrl: licenseDocUrl,
+                        
+                        utrNumber: utrInput,
+                        status: "Pending",
+                        registrationDate: new Date().toLocaleString()
+                    };
+
+                    // ३. Firebase मध्ये डेटा पाठवणे (नोंदणी क्रमांक तयार करून)
+                    let snapshot = await db.collection("workers").orderBy("regNo", "desc").limit(1).get();
+                    let nextNum = 1;
                     if (!snapshot.empty) {
                         let lastWorker = snapshot.docs[0].data();
                         if (lastWorker.regNo) {
-                            // "AP00005" मधून "AP" काढून फक्त 5 घेणे आणि त्यात 1 मिळवणे
                             let lastNumStr = lastWorker.regNo.replace("AP", "");
                             nextNum = parseInt(lastNumStr) + 1;
                         }
                     }
 
-                    // २. नवीन नंबर तयार करणे (उदा. 1 चे AP00001, 12 चे AP00012)
-                    let newRegNo = "AP" + String(nextNum).padStart(5, '0');
-                    
-                    // ३. हा नंबर workerData मध्ये गुपचूप ॲड करणे (हा कामगाराला कुठेही दिसणार नाही)
-                    workerData.regNo = newRegNo;
+                    workerData.regNo = "AP" + String(nextNum).padStart(5, '0');
+                    await db.collection("workers").add(workerData);
 
-                    // ४. आता फायनल डेटा Firebase मध्ये सेव्ह करणे
-                    return db.collection("workers").add(workerData);
-                })
-                .then((docRef) => {
+                    // ४. सक्सेस मेसेज आणि रिसेट
                     qrModal.style.display = "none"; 
-                    alert("✅ Registration Successful! Your data and UTR number have been saved.");
+                    alert("✅ Registration Successful!\nYour data and all documents have been securely saved.");
                     if(form) form.reset();
                     document.getElementById('utrNumber').value = ""; 
-                })
-                .catch((error) => {
-                    console.error("Error adding document: ", error);
-                    alert("❌ An error occurred while saving the data. Please try again.");
-                });
+                    
+                    doneBtn.innerText = "Done / Payment Completed";
+                    doneBtn.disabled = false;
+                    doneBtn.style.backgroundColor = "#2e7d32";
+                    // नवीन: फॉर्म यशस्वी भरल्यावर होम पेजवर जाणे
+                    window.location.href = "index.html";
+
+                } catch (error) {
+                    console.error("Error uploading/saving: ", error);
+                    alert("❌ Server Error: There was a problem uploading the documents. Please check your internet connection and try again.");
+                    doneBtn.innerText = "Done / Payment Completed";
+                    doneBtn.disabled = false;
+                    doneBtn.style.backgroundColor = "#2e7d32";
+                }
 
             } else {
                 utrError.style.display = "block"; 
                 document.getElementById('utrNumber').style.borderColor = "red";
-                setTimeout(() => {
-                    document.getElementById('utrNumber').style.borderColor = "#ccc";
-                }, 2000);
+                setTimeout(() => { document.getElementById('utrNumber').style.borderColor = "#ccc"; }, 2000);
             }
         }
     </script>

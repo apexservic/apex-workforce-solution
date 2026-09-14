@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - APEX Man Power</title>
+    <link rel="icon" type="image/png" href="Apex.logo.png">
     <link rel="stylesheet" href="admin.css">
     <!-- Firebase App & Firestore CDN v10.8.0 -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -166,15 +167,20 @@
                                     ${data.employmentType ? `<p style="margin:5px 0;"><strong>Emp Type:</strong> ${data.employmentType}</p>` : ''}
                                     ${data.expYears ? `<p style="margin:5px 0;"><strong>Experience:</strong> ${data.expYears} Years</p>` : ''}
                                     
-                                    <!-- अपलोड केलेले डॉक्युमेंट्स -->
-                                    <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 6px; border: 1px dashed #2196f3;">
+                                    <!-- अपलोड केलेले डॉक्युमेंट्स (बटनसह) -->
+                                    <div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-radius: 6px; border: 1px dashed #2196f3;">
                                         <strong style="color: #0b2545;">Attached Documents:</strong><br>
-                                        <span style="color: #d35400; font-size: 13px; line-height: 1.6;">
-                                            ${data.hasAadhaarDoc ? '✅ Aadhaar Card<br>' : ''}
-                                            ${data.hasConsentDoc ? '✅ Parental Consent<br>' : ''}
-                                            ${data.hasLicenseDoc ? '✅ License / Certificate<br>' : ''}
-                                            ${(!data.hasAadhaarDoc && !data.hasConsentDoc && !data.hasLicenseDoc) ? '❌ No Documents Attached' : ''}
-                                        </span>
+                                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                            
+                                            ${data.aadhaarDocUrl ? `<a href="${data.aadhaarDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View Aadhaar</a>` : (data.hasAadhaarDoc ? '<span style="color: #d35400; font-size: 13px;">✅ Aadhaar (File Not Uploaded)</span>' : '')}
+                                            
+                                            ${data.consentDocUrl ? `<a href="${data.consentDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View Consent</a>` : (data.hasConsentDoc ? '<span style="color: #d35400; font-size: 13px;">✅ Consent (File Not Uploaded)</span>' : '')}
+                                            
+                                            ${data.licenseDocUrl ? `<a href="${data.licenseDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View License</a>` : (data.hasLicenseDoc ? '<span style="color: #d35400; font-size: 13px;">✅ License (File Not Uploaded)</span>' : '')}
+                                            
+                                            ${(!data.hasAadhaarDoc && !data.hasConsentDoc && !data.hasLicenseDoc && !data.aadhaarDocUrl && !data.consentDocUrl && !data.licenseDocUrl) ? '<span style="color: red; font-size: 13px;">❌ No Documents Attached</span>' : ''}
+                                            
+                                        </div>
                                     </div>
                                 </div>
                             </div>
