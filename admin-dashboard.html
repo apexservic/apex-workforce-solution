@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - APEX Man Power</title>
+    <title>Admin Dashboard</title>
     <link rel="icon" type="image/png" href="Apex.logo.png">
     <link rel="stylesheet" href="admin.css">
     <!-- Firebase App & Firestore CDN v10.8.0 -->
@@ -30,7 +30,7 @@
 
             <!-- २. Activity and Audit Logs -->
             <li>
-                <a href="#" class="menu-link">📝 Activity & Audit Logs</a>
+                <a href="#" class="menu-link" onclick="showActivityLogs(event)">📝 Activity & Audit Logs</a>
             </li>
             <!-- ३. Security & Audit Logs (डिव्हाइस इन्फो, लोकेशन आणि ॲक्टिव्ह टाईम) -->
             <li>
@@ -46,7 +46,18 @@
     <div class="main-content">
         <header class="dashboard-header">
             <h2>Dashboard</h2>
-            <div class="admin-profile">👤 Admin</div>
+            
+            <!-- सर्च बॉक्स, सजेशन्स आणि ॲडमिन प्रोफाईल -->
+            <div style="display: flex; align-items: center; gap: 15px; position: relative;">
+                
+                <input type="text" id="searchBox" onkeyup="filterTables()" placeholder="🔍 Search Name, Work Type, Reg No..." style="padding: 10px; width: 300px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; z-index: 1001;">
+                
+                <!-- 💡 हा नवीन सजेशन्स बॉक्स ॲड केला आहे (सुरुवातीला लपवलेला) -->
+                <div id="searchSuggestions" style="display: none; position: absolute; top: 45px; left: 0; width: 300px; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); max-height: 250px; overflow-y: auto; z-index: 1000; flex-direction: column;">
+                </div>
+
+                <div class="admin-profile">👤 Admin</div>
+            </div>
         </header>
 
         <div class="content-area" style="display: none;">
@@ -67,6 +78,25 @@
                     </thead>
                     <tbody id="adminTableBody">
                         <!-- फायरबेसवरून डेटा इथे ऑटोमॅटिक येईल -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Activity & Audit Logs Section (नवीन ॲड केलेला भाग) -->
+        <div class="activity-log-area" style="display: none; padding: 30px;">
+            <h3>Activity & Audit Logs (Approve / Reject)</h3>
+            <div style="overflow-x: auto; margin-top: 20px;">
+                <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; background: white;">
+                    <thead>
+                        <tr style="background-color: #0b2545; color: white;">
+                            <th style="padding: 10px;">Date & Time</th>
+                            <th style="padding: 10px;">Activity</th>
+                            <th style="padding: 10px;">Current Status</th>
+                            <th style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityTableBody">
+                        <!-- ॲक्टिव्हिटी डेटा इथे ऑटोमॅटिक येईल -->
                     </tbody>
                 </table>
             </div>
@@ -130,7 +160,11 @@
                         <td style="padding: 10px;">${data.ageCategory || ''}</td>
                         <td style="padding: 10px;">${data.utrNumber || ''}</td>
                         <td style="padding: 10px;">${data.registrationDate || ''}</td>
-                        <td style="padding: 10px;"><span style="color: green; font-weight: bold;">${data.status || 'Pending'}</span></td>
+                        <td style="padding: 10px;">
+                            <span style="color: ${data.status === 'Accepted' ? 'green' : (data.status === 'Rejected' ? 'red' : '#ff9800')}; font-weight: bold;">
+                                ${data.status || 'Pending'}
+                            </span>
+                        </td>
                         <td style="padding: 10px;">
                             <button class="view-btn" onclick="toggleDetails('${docId}')">View Details</button>
                             <button onclick="deleteWorker('${docId}')" style="background-color: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px;">Delete</button>
@@ -230,6 +264,335 @@
                 }
             }
         }
+        // १. Activity Logs दाखवणारे फंक्शन
+        function showActivityLogs(event) {
+            event.preventDefault();
+            document.querySelector('.content-area').style.display = "none";
+            document.querySelector('.activity-log-area').style.display = "block";
+            loadActivityLogs();
+        }
+
+        // २. Worker Table दाखवताना Activity Log लपवण्यासाठी जुन्या फंक्शनमध्ये छोटा बदल
+        function showWorkerTable(event) {
+            event.preventDefault(); 
+            document.querySelector('.content-area').style.display = "block";
+            let activityArea = document.querySelector('.activity-log-area');
+            if(activityArea) activityArea.style.display = "none";
+            loadWorkerApplications();
+        }
+
+        // ३. Activity Logs चा डेटा फायरबेसवरून फेच करणे (Details सह)
+        function loadActivityLogs() {
+            let activityBody = document.getElementById('activityTableBody');
+            
+            db.collection("workers").orderBy("registrationDate", "desc").onSnapshot((snapshot) => {
+                if(activityBody) activityBody.innerHTML = ""; 
+                
+                snapshot.forEach((doc) => {
+                    let data = doc.data();
+                    let docId = doc.id;
+                    
+                    // स्टेटसनुसार रंग ठरवणे (Pending=केशरी, Accepted=हिरवा, Rejected=लाल)
+                    let statusColor = data.status === 'Accepted' ? 'green' : (data.status === 'Rejected' ? 'red' : '#ff9800');
+
+                    // १. मुख्य रो (ज्यामध्ये आता View Details बटन आहे)
+                    let mainRow = `<tr>
+                        <td style="padding: 10px;">${data.registrationDate || 'N/A'}</td>
+                        <td style="padding: 10px;">New Application received from <b>${data.fullName}</b> (Reg. No: ${data.regNo || 'N/A'})</td>
+                        <td style="padding: 10px; font-weight: bold; color: ${statusColor};">${data.status || 'Pending'}</td>
+                        <td style="padding: 10px;">
+                            <button onclick="toggleActivityDetails('${docId}')" style="background-color: #0b2545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 8px; width: 100%;">👁️ View Details</button><br>
+                            
+                            ${(!data.status || data.status === 'Pending') ? 
+                            `<div style="display: flex; gap: 5px; justify-content: center;">
+                                <button onclick="updateWorkerStatus('${docId}', 'Accepted', '${data.mobileNumber}', '${data.fullName}')" style="background-color: #2e7d32; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">✅ Accept</button>
+                                <button onclick="updateWorkerStatus('${docId}', 'Rejected', '${data.mobileNumber}', '${data.fullName}')" style="background-color: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">❌ Reject</button>
+                             </div>` 
+                            : `<span style="color: gray; font-weight: bold; display: block; text-align: center;">Action Completed</span>`}
+                        </td>
+                    </tr>`;
+
+                    // २. एक्सपांड होणारी तपशीलवार रो (Activity Log साठी)
+                    let detailsRow = `<tr id="activity-details-${docId}" class="details-row" style="display: none;">
+                        <td colspan="4" style="padding: 0; background-color: #f9f9f9;">
+                            <div style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 20px; padding: 20px; border-left: 4px solid #0b2545; background: #fafafa; font-size: 14px; color: #0b2545;">
+                                
+                                <!-- १. प्रोफाइल फोटो आणि रोल -->
+                                <div style="text-align: center; border-right: 1px solid #ddd; padding-right: 20px;">
+                                    <img src="${data.profilePhoto || 'https://via.placeholder.com/100?text=No+Photo'}" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #0b2545; object-fit: cover;">
+                                    <h4 style="margin: 10px 0 5px 0; color: #ff6600;">${data.userRole ? data.userRole : data.ageCategory}</h4>
+                                </div>
+                                
+                                <!-- २. वैयक्तिक माहिती -->
+                                <div>
+                                    <p style="margin:5px 0;"><strong>Gender:</strong> ${data.gender || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Caste:</strong> ${data.casteCategory || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Marital Status:</strong> ${data.maritalStatus || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>DOB:</strong> ${data.dob || '-'} (${data.age || '-'})</p>
+                                    <p style="margin:5px 0;"><strong>Mobile:</strong> ${data.mobileNumber || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Address:</strong> ${data.address || '-'}, ${data.village || ''}, ${data.taluka || ''}, ${data.district || ''}</p>
+                                </div>
+                                
+                                <!-- ३. शिक्षण, काम आणि डॉक्युमेंट्स -->
+                                <div>
+                                    ${data.penNumber ? `<p style="margin:5px 0;"><strong>PEN Number:</strong> ${data.penNumber}</p>` : ''}
+                                    ${data.standard ? `<p style="margin:5px 0;"><strong>Education:</strong> ${data.standard}</p>` : ''}
+                                    ${data.workType ? `<p style="margin:5px 0;"><strong>Work Type:</strong> ${data.workType === 'Other' ? data.otherWork : data.workType}</p>` : ''}
+                                    ${data.employmentType ? `<p style="margin:5px 0;"><strong>Emp Type:</strong> ${data.employmentType}</p>` : ''}
+                                    ${data.expYears ? `<p style="margin:5px 0;"><strong>Experience:</strong> ${data.expYears} Years</p>` : ''}
+                                    
+                                    <!-- अपलोड केलेले डॉक्युमेंट्स (बटनसह) -->
+                                    <div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-radius: 6px; border: 1px dashed #2196f3;">
+                                        <strong style="color: #0b2545;">Attached Documents:</strong><br>
+                                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                            ${data.aadhaarDocUrl ? `<a href="${data.aadhaarDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View Aadhaar</a>` : (data.hasAadhaarDoc ? '<span style="color: #d35400; font-size: 13px;">✅ Aadhaar (No File)</span>' : '')}
+                                            ${data.consentDocUrl ? `<a href="${data.consentDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View Consent</a>` : (data.hasConsentDoc ? '<span style="color: #d35400; font-size: 13px;">✅ Consent (No File)</span>' : '')}
+                                            ${data.licenseDocUrl ? `<a href="${data.licenseDocUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View License</a>` : (data.hasLicenseDoc ? '<span style="color: #d35400; font-size: 13px;">✅ License (No File)</span>' : '')}
+                                            ${(!data.hasAadhaarDoc && !data.hasConsentDoc && !data.hasLicenseDoc && !data.aadhaarDocUrl && !data.consentDocUrl && !data.licenseDocUrl) ? '<span style="color: red; font-size: 13px;">❌ No Documents</span>' : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>`;
+                    
+                    if(activityBody) {
+                        activityBody.innerHTML += mainRow + detailsRow;
+                    }
+                });
+            });
+        }
+        // ५. Activity Log मध्ये डिटेल्स उघडणे / बंद करणे (Toggle Function)
+        function toggleActivityDetails(docId) {
+            let detailsRow = document.getElementById(`activity-details-${docId}`);
+            if (detailsRow) {
+                if (detailsRow.style.display === "table-row") {
+                    detailsRow.style.display = "none";
+                } else {
+                    detailsRow.style.display = "table-row";
+                }
+            }
+        }
+        // ६. मल्टी-कीवर्ड सर्च आणि Auto-Suggestions लॉजिक
+        function filterTables() {
+            let inputText = document.getElementById("searchBox").value.toLowerCase().trim();
+            let searchWords = inputText.split(/\s+/); 
+            
+            let contentArea = document.querySelector('.content-area');
+            let isWorkerTable = contentArea.style.display !== "none"; // सध्या कोणते टेबल चालू आहे
+            let activeTableBody = isWorkerTable ? document.getElementById("adminTableBody") : document.getElementById("activityTableBody");
+
+            let suggestionsBox = document.getElementById("searchSuggestions");
+            suggestionsBox.innerHTML = ""; // जुने सजेशन्स क्लीन करणे
+            let suggestionsSet = new Set(); // डुप्लिकेट नावे टाळण्यासाठी
+            let hasMatches = false;
+
+            if (!activeTableBody) return;
+
+            let trs = activeTableBody.getElementsByTagName("tr");
+
+            for (let i = 0; i < trs.length; i++) {
+                if (trs[i].classList.contains("details-row")) continue; 
+
+                let mainRowText = trs[i].innerText.toLowerCase();
+                let detailsRowText = "";
+                
+                if (i + 1 < trs.length && trs[i + 1].classList.contains("details-row")) {
+                    detailsRowText = trs[i + 1].innerText.toLowerCase();
+                }
+
+                let combinedText = mainRowText + " " + detailsRowText;
+                let match = true;
+
+                // जर इनपुट रिकामा नसेल, तर मॅच चेक करा
+                if (inputText !== "") {
+                    for (let word of searchWords) {
+                        if (!combinedText.includes(word)) {
+                            match = false;
+                            break;
+                        }
+                    }
+                }
+
+                // जर मॅच झाला तर ओळ दाखवा
+                if (match) {
+                    trs[i].style.display = ""; 
+                    
+                    // जर युजर काहीतरी टाईप करत असेल, तर सजेशन्स बनवणे
+                    if (inputText !== "") {
+                        hasMatches = true;
+                        let cells = trs[i].getElementsByTagName("td");
+                        
+                        if (cells.length > 2) {
+                            let suggestionText = "";
+                            if (isWorkerTable) {
+                                // Worker टेबलमधून नाव आणि Reg No काढणे
+                                suggestionText = cells[1].innerText.trim() + " (" + cells[0].innerText.trim() + ")";
+                            } else {
+                                // Activity टेबलमधून मजकूर काढणे
+                                suggestionText = cells[1].innerText.trim();
+                            }
+                            suggestionsSet.add(suggestionText); // सेटमध्ये नाव ॲड करणे
+                        }
+                    }
+                } else {
+                    trs[i].style.display = "none"; 
+                    if (i + 1 < trs.length && trs[i + 1].classList.contains("details-row")) {
+                        trs[i + 1].style.display = "none";
+                    }
+                }
+            }
+
+            // सजेशन्स बॉक्समध्ये डेटा दाखवणे किंवा बॉक्स लपवणे
+            if (inputText !== "" && hasMatches) {
+                suggestionsBox.style.display = "flex";
+                
+                suggestionsSet.forEach(text => {
+                    let div = document.createElement("div");
+                    div.innerText = text;
+                    div.style.padding = "10px 15px";
+                    div.style.cursor = "pointer";
+                    div.style.borderBottom = "1px solid #eee";
+                    div.style.color = "#0b2545";
+                    div.style.fontSize = "14px";
+                    div.style.fontWeight = "bold";
+                    
+                    // Hover effect (माउस नेल्यावर रंग बदलेल)
+                    div.onmouseover = function() { 
+                        this.style.backgroundColor = "#ff6600"; 
+                        this.style.color = "white"; 
+                    };
+                    div.onmouseout = function() { 
+                        this.style.backgroundColor = "white"; 
+                        this.style.color = "#0b2545"; 
+                    };
+                    
+                    // सजेशनवर क्लिक केल्यावर काय होईल
+                    div.onclick = function() {
+                        document.getElementById("searchBox").value = text.split(" (")[0]; // फक्त नाव सर्च बॉक्समध्ये टाकणे
+                        suggestionsBox.style.display = "none";
+                        filterTables(); // नाव टाकल्यावर पुन्हा एकदा फास्ट फिल्टर करणे
+                    };
+                    
+                    suggestionsBox.appendChild(div);
+                });
+            } else {
+                suggestionsBox.style.display = "none";
+            }
+        }
+
+       // ७. जर युजरने स्क्रीनवर कुठेही दुसरीकडे क्लिक केले, तर सजेशन्स बॉक्स आपोआप लपवा
+        document.addEventListener("click", function(event) {
+            let searchBox = document.getElementById("searchBox");
+            let suggestionsBox = document.getElementById("searchSuggestions");
+            
+            if (event.target !== searchBox && event.target !== suggestionsBox) {
+                if (suggestionsBox) suggestionsBox.style.display = "none";
+            }
+        });
+
+        // ---------------- येथे नवीन कोड पेस्ट कर ----------------
+        // ४. स्टेट्स अपडेट करण्याचे फंक्शन (Reject Reason आणि SMS सिस्टीमसह)
+        function updateWorkerStatus(docId, newStatus, mobileNumber, fullName) {
+            let rejectReason = "";
+
+            // जर ॲडमिनने 'Reject' वर क्लिक केले, तर कारण विचारा
+            if (newStatus === "Rejected") {
+                rejectReason = prompt(`${fullName} You are rejecting the form.\nPlease write the reason for rejection below. (Ex. Document blur, Underage):`);
+                
+                // जर ॲडमिनने कारण दिले नाही किंवा Cancel केले, तर प्रोसेस थांबवा
+                if (rejectReason === null || rejectReason.trim() === "") {
+                    alert("❌ The form cannot be rejected without providing a reason.");
+                    return; 
+                }
+            } else {
+                // Accept करताना फक्त कन्फर्मेशन घ्या
+                let confirmAccept = confirm(`Are you sure you want to ACCEPT ${fullName}'s application?`);
+                if (!confirmAccept) return;
+            }
+
+            // फायरबेसमध्ये नवीन स्टेटस आणि रिजेक्टचे कारण सेव्ह करणे
+            db.collection("workers").doc(docId).update({
+                status: newStatus,
+                rejectReason: rejectReason // कारण डेटाबेसमध्ये कायमचे सेव्ह होईल
+            }).then(() => {
+                alert(`✅ Application ${newStatus} successfully!`);
+                
+                // कामगाराला SMS पाठवण्याचे फंक्शन कॉल करणे
+                sendSMSMessage(mobileNumber, fullName, newStatus, rejectReason);
+                
+            }).catch((error) => {
+                console.error("Error updating status: ", error);
+                alert("❌ Error updating status.");
+            });
+        }
+
+       // ५. कामगाराला खरोखरचा SMS पाठवणारे फंक्शन (No-CORS GET Method)
+        function sendSMSMessage(mobile, name, status, reason) {
+            let smsText = "";
+            
+            if(status === "Accepted") {
+                smsText = `Hello ${name}, Your application for APEX WORKFORCE SOLUTION has been ACCEPTED. Welcome to our team! - APEX `;
+            } else if (status === "Rejected") {
+                smsText = `Hello ${name}, Your application for APEX WORKFORCE has been REJECTED. Reason: ${reason}. Please apply again. - APEX `;
+            }
+
+            // तुझी Fast2SMS ची API Key
+            const apiKey = "F5I0OKntM1sX6WR8oQJ9PkSVmvBigGlfpde2yhEwqYANHaDLCxQbwlJdn67gIvUO5iVDr8L2WTZXyB0S"; 
+
+            // Fast2SMS ची GET लिंक (route=q सह)
+            const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=q&message=${encodeURIComponent(smsText)}&language=english&flash=0&numbers=${mobile}`;
+
+            // 'no-cors' मोड वापरून रिक्वेस्ट पाठवणे (यामुळे ब्राउझर ब्लॉक करत नाही)
+            fetch(url, {
+                method: 'GET',
+                mode: 'no-cors' // हा सगळ्यात महत्वाचा शब्द आहे!
+            })
+            .then(() => {
+                // no-cors मुळे आपल्याला Fast2SMS कडून आलेला रिप्लाय वाचता येत नाही, पण मेसेज १००% जातो.
+                alert(`📱 ${name} (${mobile}) sms sending request was successful! `);
+            })
+            .catch(error => {
+                console.error("SMS Error:", error);
+                alert("❌ Something went wrong due to a technical issue.");
+            });
+        }
+        // ---------------- ऑटो-ॲक्सेप्ट लॉजिक (Auto-Accept after 5 mins) ----------------
+        // हा कोड दर १ मिनिटाने (60000 ms) बॅकग्राउंडला रन होईल
+        setInterval(() => {
+            // फायरबेसमधून फक्त 'Pending' असलेले फॉर्म्स शोधणे
+            db.collection("workers").where("status", "==", "Pending").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let data = doc.data();
+                    
+                    // फॉर्म भरल्याची वेळ आणि आत्ताची वेळ यातील फरक काढणे
+                    if (data.registrationDate) {
+                        let regDate = new Date(data.registrationDate);
+                        let now = new Date();
+                        let diffInMinutes = Math.floor((now - regDate) / 60000); // फरक मिनिटांमध्ये
+
+                        // जर ५ किंवा त्यापेक्षा जास्त मिनिटे झाली असतील...
+                        if (diffInMinutes >= 5) {
+                            
+                            // १. डेटाबेसमध्ये स्टेटस 'Accepted' करणे
+                            db.collection("workers").doc(doc.id).update({
+                                status: "Accepted",
+                                rejectReason: "Auto Accepted by System"
+                            }).then(() => {
+                                console.log(`⏳ Auto Accepted: ${data.fullName}`);
+                                
+                                // २. कामगाराला आपोआप SMS पाठवणे
+                                sendSMSMessage(data.mobileNumber, data.fullName, "Accepted", "");
+                            }).catch((error) => {
+                                console.error("Auto Accept Error:", error);
+                            });
+                            
+                        }
+                    }
+                });
+            });
+        }, 60000); // 60000 milliseconds = 1 मिनिट
+        // --------------------------------------------------------------------------------
     </script>
 </body>
 </html>

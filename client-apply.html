@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Apply</title>
+    <link rel="icon" type="image/png" href="Apex.logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- हेडर (तुमच्या जुन्या पेजसारखाच) -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="Apex.logo.png" alt="Apex Logo" class="logo">
+            <div class="company-info">
+                <h1>APEX WORKFORCE SOLUTION</h1>
+                <p class="motto">PEOPLE. POWER. PROGRESS.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- फॉर्म सेक्शन -->
+    <main class="form-page">
+        <div class="form-container">
+            <h2 class="form-main-title">Client Requirement Form</h2>
+            <p class="form-subtitle">Please fill out the form below with your manpower requirements.
+            Our team will contact you shortly.</p>
+
+            <form action="#" method="POST" enctype="multipart/form-data">
+                
+                <!-- १. Company Details -->
+                <div class="form-section">
+                    <h3 class="section-heading">🏢 Company Details</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Company / Organization Name*</label>
+                            <input type="text" name="companyName" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Contact Person Name*</label>
+                            <input type="text" name="contactPerson" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Designation</label>
+                            <input type="text" name="designation">
+                        </div>
+                        <div class="input-group">
+                            <label>Mobile Number*</label>
+                            <input type="tel" name="mobile" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Email ID*</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Industry Type</label>
+                            <input type="text" name="industryType" placeholder="Ex. Manufacturing, IT, Construction">
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Company Address</label>
+                            <textarea name="companyAddress" rows="2"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>GST Number (Optional)</label>
+                            <input type="text" name="gstNumber">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- २. Manpower Requirement -->
+                <div class="form-section">
+                    <h3 class="section-heading">👥 Manpower Requirement</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Required Staff Category*</label>
+                            <input type="text" name="staffCategory" placeholder="Ex. Skilled Worker, Helper, Guard" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Job Position / Designation*</label>
+                            <input type="text" name="jobPosition" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Number of Workers Required*</label>
+                            <input type="number" name="workersCount" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Work Location*</label>
+                            <input type="text" name="workLocation" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Qualification</label>
+                            <input type="text" name="qualification">
+                        </div>
+                        <div class="input-group">
+                            <label>Required Experience</label>
+                            <input type="text" name="experience" placeholder="Ex. 2 Years, Fresher">
+                        </div>
+                        <div class="input-group">
+                            <label>Salary / Budget Per Month*</label>
+                            <input type="text" name="salary" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Duty Hours / Shift*</label>
+                            <input type="text" name="dutyHours" placeholder="Ex. 8 Hours, Day/Night Shift" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Weekly Holiday</label>
+                            <input type="text" name="weeklyHoliday" placeholder="Ex. Sunday">
+                        </div>
+                        <div class="input-group">
+                            <label>Joining Date*</label>
+                            <input type="date" name="joiningDate" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Contract Duration</label>
+                            <input type="text" name="contractDuration" placeholder="Ex. 3 Months, 1 Years">
+                        </div>
+                        <div class="input-group">
+                            <label>Gender Preference</label>
+                            <select name="gender">
+                                <option value="Any">Any</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Age Limit</label>
+                            <input type="text" name="ageLimit" placeholder="Ex. 18 to 35">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ३. Facilities Provided -->
+                <div class="form-section">
+                    <h3 class="section-heading">✅ Facilities Provided</h3>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" name="facilities" value="Accommodation"> Accommodation</label>
+                        <label><input type="checkbox" name="facilities" value="Food"> Food</label>
+                        <label><input type="checkbox" name="facilities" value="Transportation"> Transportation</label>
+                        <label><input type="checkbox" name="facilities" value="Uniform"> Uniform</label>
+                        <label><input type="checkbox" name="facilities" value="PF"> PF</label>
+                        <label><input type="checkbox" name="facilities" value="ESIC"> ESIC</label>
+                        <label><input type="checkbox" name="facilities" value="Overtime"> Overtime</label>
+                        <label><input type="checkbox" name="facilities" value="Other"> Other Facilities</label>
+                    </div>
+                </div>
+
+                <!-- ४. Additional Information -->
+                <div class="form-section">
+                    <h3 class="section-heading">📝 Additional Information</h3>
+                    <div class="input-group full-width">
+                        <label>Job Description / Special Requirement</label>
+                        <textarea name="jobDescription" rows="3"></textarea>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Company Requirement Letter Upload (Optional)</label>
+                        <input type="file" name="requirementLetter" accept=".pdf,.doc,.docx,.jpg,.png">
+                    </div>
+                </div>
+
+                <!-- Agreement & Submit -->
+                <div class="agreement-box">
+                    <label>
+                        <input type="checkbox" required> I agree to be contacted by Apex Workforce Solution*
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Requirement</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- फूटर -->
+    <footer class="footer">
+        <p>&copy; 2026 APEX Workforce Solution. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
