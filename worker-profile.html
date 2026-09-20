@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Worker Profile - APEX Manpower</title>
+    <title>Worker Profile</title>
     <link rel="icon" type="image/png" href="Apex.logo.png">
+    <!-- ही लाईन ॲड कर (PDF डाउनलोड चालण्यासाठी) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         /* =====================================
            १. CSS - ग्लोबल डिझाईन
@@ -15,13 +18,64 @@
             margin: 0;
             padding: 0;
         }
-        body {
+       body {
             background-color: #f0f2f5;
             display: flex;
+            flex-direction: column; /* उभा लेआउट */
+            min-height: 100vh;
+        }
+
+        /* मधल्या कंटेंटसाठी नवीन क्लास */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
+            width: 100%;
+        }
+
+        /* Global Header Design */
+        .global-header {
+            background-color: #0b2545;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .global-header img {
+            height: 55px;
+            margin-right: 15px;
+        }
+        .global-header .header-text h1 {
+            color: #ff6600;
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0 0 2px 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .global-header .header-text p {
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        /* Global Footer Design */
+        .global-footer {
+            background-color: #0b2545;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            width: 100%;
+            border-top: 4px solid #ff6600;
+            margin-top: auto;
         }
         
         /* लॉगिन कार्ड डिझाईन */
@@ -193,9 +247,99 @@
             .info-item span { width: 140px; }
             .photo-container { width: 180px; margin-bottom: 20px; }
         }
+        /* Modal (Pop-up) Background */
+.modal-overlay {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+    justify-content: center; align-items: center; overflow-y: auto; padding: 20px;
+}
+.modal-content {
+    position: relative; background: transparent; 
+}
+.close-btn {
+    position: absolute; top: -15px; right: -15px; background: red; color: white; 
+    border-radius: 50%; width: 40px; height: 40px; text-align: center;
+    line-height: 40px; font-size: 24px; font-weight: bold; cursor: pointer; z-index: 1001;
+}
+
+/* =========================================
+   Landscape ID Card Design (Exact Match)
+========================================== */
+.printable-area {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.id-card-landscape {
+    width: 650px; height: 400px; background: white; border: 1px solid #ccc;
+    position: relative; font-family: 'Arial', sans-serif; overflow: hidden;
+}
+
+/* Front Side Header */
+.card-header { display: flex; height: 95px; }
+.logo-area { width: 35%; display: flex; justify-content: center; align-items: center; padding: 10px; }
+.logo-area img { max-height: 75px; max-width: 100%; }
+
+.title-area { width: 65%; display: flex; flex-direction: column; }
+.title-blue {
+    background-color: #112a55; color: white; height: 55%;
+    display: flex; align-items: center; padding-left: 20px;
+    font-size: 24px; font-weight: bold; letter-spacing: 1px;
+    clip-path: polygon(5% 0, 100% 0, 100% 100%, 0% 100%); margin-left: -15px;
+}
+.title-orange {
+    background-color: #f37021; color: white; height: 45%;
+    display: flex; align-items: center; padding-left: 30px;
+    font-size: 22px; font-weight: bold;
+    clip-path: polygon(0% 0, 100% 0, 100% 100%, 3% 100%); margin-left: -25px;
+}
+
+/* Front Side Body */
+.card-body { display: flex; padding: 20px; position: relative; height: 235px; }
+.watermark {
+    position: absolute; top: 50%; left: 45%; transform: translate(-50%, -50%);
+    font-size: 70px; color: rgba(0,0,0,0.04); font-weight: 900; pointer-events: none; z-index: 1;
+}
+.info-area { width: 70%; display: flex; flex-direction: column; gap: 14px; z-index: 2; padding-top: 5px;}
+.info-row { display: flex; font-size: 22px; color: #000; }
+.info-row .label { width: 140px; font-weight: bold; letter-spacing: 0.5px;}
+.info-row .colon { width: 20px; font-weight: bold; }
+.info-row .value { font-weight: bold; color: #222; }
+
+.photo-area { width: 30%; display: flex; justify-content: flex-end; align-items: flex-start; z-index: 2; }
+.photo-area img { width: 130px; height: 160px; object-fit: cover; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
+
+/* Front Side Footer */
+.card-footer { position: absolute; bottom: 0; width: 100%; }
+.footer-orange { background-color: #f37021; color: black; font-size: 24px; font-weight: bold; padding: 8px 25px; }
+.footer-blue { background-color: #112a55; height: 25px; }
+
+/* =========================================
+   Back Side Design
+========================================== */
+.back-blue-header { background: #112a55; color: white; text-align: center; font-size: 28px; font-weight: bold; padding: 12px; letter-spacing: 1px;}
+.back-banner-placeholder {
+    width: 100%; height: 270px; background-color: #eee;
+    display: flex; justify-content: center; align-items: center; color: #888; font-size: 16px; font-style: italic;
+    background-image: url('back-banner.jpeg'); /* Ithe tumcha banner image URL taka */
+    background-size: cover; background-position: center;
+}
+.back-blue-footer {
+    position: absolute; bottom: 0; width: 100%; background: #112a55; color: white;
+    text-align: center; font-size: 20px; font-weight: bold; padding: 15px; letter-spacing: 1px;
+}
     </style>
 </head>
 <body>
+    <!-- १. नवीन ग्लोबल हेडर -->
+    <header class="global-header">
+        <img src="Apex.logo.png" alt="Apex Logo">
+        <div class="header-text">
+            <h1>APEX WORKFORCE SOLUTION</h1>
+            <p>PEOPLE. POWER. PROGRESS.</p>
+        </div>
+    </header>
+
+    <!-- २. इथून मेन कंटेंट सुरु होईल -->
+    <div class="main-content">
 
     <!-- १. लॉगिन आणि OTP सेक्शन (तुम्ही सांगितल्याप्रमाणे तसाच ठेवला आहे) -->
     <div class="login-card" id="loginSection">
@@ -264,6 +408,8 @@
             <!-- उजवी बाजू: मोठा फोटो -->
             <div class="photo-container">
                 <img id="profPhoto" class="worker-photo" src="https://via.placeholder.com/220x260?text=Photo" alt="Profile Image">
+                <!-- हे बटन इथे ऍड करा -->
+                <button id="editProfileBtn" class="btn" style="background-color: #f37021; width: 100%; margin-top: 15px; font-size: 16px;">✏️ Edit Profile</button>
             </div>
         </div>
 
@@ -283,19 +429,126 @@
                 <!-- इथे ऑटोमॅटिक योजना दिसतील -->
             </div>
         </div>
-            
+            <!-- View ID Card Button -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="viewIdBtn" class="btn" style="background-color: #0b2545; width: 200px; font-size: 18px;">👁️ View ID Card</button>
+            </div>
+<!-- Edit Profile Modal (Pop-up) -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+        <span class="close-btn" id="closeEditModal">&times;</span>
+        <h2 style="color: #0b2545; text-align: center; margin-bottom: 20px;">Edit Your Profile</h2>
+        
+        <div class="form-group"><label>Full Name</label><input type="text" id="editName"></div>
+        <div class="form-group"><label>Date of Birth (YYYY-MM-DD)</label><input type="date" id="editDob"></div>
+        <div class="form-group"><label>Age</label><input type="number" id="editAge"></div>
+        <div class="form-group"><label>Gender</label><input type="text" id="editGender"></div>
+        <div class="form-group"><label>Marital Status</label><input type="text" id="editMarital"></div>
+        <div class="form-group"><label>Caste Category</label><input type="text" id="editCast"></div>
+        <div class="form-group"><label>Village</label><input type="text" id="editVillage"></div>
+        <div class="form-group"><label>District</label><input type="text" id="editDistrict"></div>
+        <!-- इथून नवीन फाईल अपलोडचे बॉक्स सुरु -->
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
+        <h3 style="color: #0b2545; font-size: 16px; margin-bottom: 10px;">Upload Documents</h3>
+        
+        <div class="form-group">
+            <label>Aadhaar Card (Image/PDF)</label>
+            <input type="file" id="editAadhaarDoc" accept="image/*,.pdf" style="padding: 5px;">
+        </div>
+        <div class="form-group">
+            <label>Consent Form (Image/PDF)</label>
+            <input type="file" id="editConsentDoc" accept="image/*,.pdf" style="padding: 5px;">
+        </div>
+        <div class="form-group">
+            <label>Work License/Certificate (Image/PDF)</label>
+            <input type="file" id="editLicenseDoc" accept="image/*,.pdf" style="padding: 5px;">
+        </div>
+        <!-- इथपर्यंत -->
+        <button id="saveProfileBtn" class="btn" style="background-color: #28a745; margin-top: 15px;">💾 Save Changes</button>
+    </div>
+</div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" style="background-color: #d32f2f; width: 200px;" onclick="location.reload()">Logout</button>
             </div>
         </div>
     </div>
+    <!-- ID Card Modal (Pop-up) -->
+    <div id="idCardModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button id="downloadPdfBtn" class="btn" style="background-color: #d32f2f; width: 200px; font-size: 16px; padding: 10px;">📥 Download PDF</button>
+            </div>
 
+            <div id="printableIdCard" class="printable-area">
+                
+                <!-- ====== FRONT SIDE ====== -->
+                <div class="id-card-landscape">
+                    <div class="card-header">
+                        <div class="logo-area">
+                            <img src="Apex.logo.png" alt="Apex Logo"> 
+                        </div>
+                        <div class="title-area">
+                            <div class="title-blue">APEX WORKFORCE SOLUTION</div>
+                            <div class="title-orange">Regi.No. - <span id="idCardRegNo">AP-XXXX-XXXX</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="watermark">APEX</div>
+                        
+                        <div class="info-area">
+                            <div class="info-row"><span class="label">Name</span> <span class="colon">:</span> <span class="value" id="idCardName">Loading...</span></div>
+                            <div class="info-row"><span class="label">Adhar No</span> <span class="colon">:</span> <span class="value" id="idCardAadhar">XXXX-XXXX-XXXX</span></div>
+                            <div class="info-row"><span class="label">DoB</span> <span class="colon">:</span> <span class="value" id="idCardDob">-</span></div>
+                            <div class="info-row"><span class="label">Gender</span> <span class="colon">:</span> <span class="value" id="idCardGender">-</span></div>
+                            <div class="info-row"><span class="label">Mobile No</span> <span class="colon">:</span> <span class="value" id="idCardMobile">-</span></div>
+                        </div>
+                        
+                        <div class="photo-area">
+                            <img id="idCardPhoto" src="https://via.placeholder.com/150" alt="Worker">
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="footer-orange">Gateway To All Scheem & Services</div>
+                        <div class="footer-blue"></div>
+                    </div>
+                </div>
+
+                <!-- ====== BACK SIDE ====== -->
+                <div class="id-card-landscape" style="margin-top: 20px;">
+                    <div class="back-blue-header">
+                        -: अपेक्स वर्कफोर्स सोल्युशन :-
+                    </div>
+                    
+                    <div class="back-banner-placeholder">
+                       <!-- Middle Banner Image Area -->
+                    </div>
+                    
+                    <div class="back-blue-footer">
+                        Contact Details : apexworkforcesolution108@gmail.com
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ३. मेन कंटेंटचा div इथे बंद कर -->
+    </div>
+
+    <!-- ४. नवीन ग्लोबल फुटर -->
+    <footer class="global-footer">
+        &copy; 2026 APEX Workforce Solution. All Rights Reserved.
+    </footer>
     <!-- =====================================
          ३. Firebase JavaScript (डेटा मॅपिंग)
     ====================================== -->
     <script type="module">
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -309,10 +562,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const auth = getAuth(app);
         auth.useDeviceLanguage(); 
 
         let fetchedUserData = null; 
+        let userDocId = null;
 
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
 
@@ -342,6 +597,7 @@
                 }
 
                 fetchedUserData = querySnapshot.docs[0].data();
+                userDocId = querySnapshot.docs[0].id;
                 sendBtn.innerText = "Sending OTP...";
                 const phoneNumber = "+91" + mobile;
 
@@ -629,9 +885,167 @@
                 findSchemesBtn.style.display = "none"; // बटन लपवणे
             }, 1200); // 1.2 सेकंद लोडिंग इफेक्ट
         };
+        // ==========================================
+        // 6. ID Card Logic & PDF Download
+        // ==========================================
+
+        // ID Card madhye Firebase data takne
+        function setupIdCard(data) {
+            let maskedAadhaar = data.aadhaarNumber ? "XXXX-XXXX-" + data.aadhaarNumber.slice(-4) : "N/A";
+            
+            document.getElementById('idCardPhoto').src = data.profilePhoto || "https://via.placeholder.com/150";
+            document.getElementById('idCardRegNo').innerText = data.regNo || "N/A";
+            document.getElementById('idCardName').innerText = data.fullName || "N/A";
+            document.getElementById('idCardAadhar').innerText = maskedAadhaar;
+            document.getElementById('idCardDob').innerText = data.dob || "N/A";
+            document.getElementById('idCardGender').innerText = data.gender || "N/A";
+            document.getElementById('idCardMobile').innerText = data.mobileNumber || "N/A";
+        }
+
+        // Modal open/close logic
+        const idModal = document.getElementById('idCardModal');
+        const viewBtn = document.getElementById('viewIdBtn');
+        const closeBtn = document.getElementById('closeModal');
+
+        viewBtn.onclick = function() {
+            setupIdCard(fetchedUserData); 
+            idModal.style.display = "flex";
+        }
+
+        closeBtn.onclick = function() { idModal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == idModal) idModal.style.display = "none"; }
+
+        // PDF Download logic (Single Page Portrait mode)
+        document.getElementById('downloadPdfBtn').onclick = function() {
+            const element = document.getElementById('printableIdCard');
+            const workerName = document.getElementById('idCardName').innerText;
+            
+            const opt = {
+                margin:       [0.5, 0, 0.5, 0], // वर आणि खाली मार्जिन
+                filename:     `Apex_ID_Card_${workerName}.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true },
+                // इथे आपण landscape ऐवजी 'portrait' केले आहे, जेणेकरून दोन्ही कार्ड एकाच पेजवर बसतील
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' } 
+            };
+
+            html2pdf().set(opt).from(element).save();
+        };
+        // ==========================================
+// 7. Edit Profile Logic
+// ==========================================
+const editModal = document.getElementById('editModal');
+const editBtn = document.getElementById('editProfileBtn');
+const closeEditBtn = document.getElementById('closeEditModal');
+const saveBtn = document.getElementById('saveProfileBtn');
+
+// जेव्हा Edit बटनवर क्लिक होईल
+editBtn.onclick = function() {
+    // जुना डेटा इनपुट बॉक्समध्ये भरणे
+    document.getElementById('editName').value = fetchedUserData.fullName || "";
+    document.getElementById('editDob').value = fetchedUserData.dob || "";
+    document.getElementById('editAge').value = fetchedUserData.age || "";
+    document.getElementById('editGender').value = fetchedUserData.gender || "";
+    document.getElementById('editMarital').value = fetchedUserData.maritalStatus || "";
+    document.getElementById('editCast').value = fetchedUserData.casteCategory || fetchedUserData.cast || "";
+    document.getElementById('editVillage').value = fetchedUserData.village || "";
+    document.getElementById('editDistrict').value = fetchedUserData.district || "";
+    
+    editModal.style.display = "flex";
+}
+
+closeEditBtn.onclick = function() { editModal.style.display = "none"; }
+
+// जेव्हा Save बटनवर क्लिक होईल
+saveBtn.onclick = function() {
+    saveBtn.innerText = "Processing Payment... 💳";
+    saveBtn.disabled = true;
+
+    // Razorpay पेमेंट सेटिंग्ज (Rs. 20)
+    var options = {
+        "key": " rzp_test_Td1PL6HhZzpj3Z ", // टीप: इथे तुमची Razorpay API Key टाका (Test किंवा Live)
+        "amount": "2000", // २० रुपये (पैसे मध्ये द्यावे लागते: 20 * 100 = 2000)
+        "currency": "INR",
+        "name": "APEX WORKFORCE SOLUTION",
+        "description": "Profile Edit Fee",
+        "theme": { "color": "#f37021" },
+        "handler": async function (response) {
+            // ==========================================
+            // पेमेंट यशस्वी झाल्यावरच इथून पुढील कोड रन होईल!
+            // ==========================================
+            saveBtn.innerText = "Uploading & Saving... ⏳";
+            
+            try {
+                const workerRef = doc(db, "workers", userDocId);
+                
+                // 1. टेक्स्ट डेटा
+                const updatedData = {
+                    fullName: document.getElementById('editName').value,
+                    dob: document.getElementById('editDob').value,
+                    age: document.getElementById('editAge').value,
+                    gender: document.getElementById('editGender').value,
+                    maritalStatus: document.getElementById('editMarital').value,
+                    casteCategory: document.getElementById('editCast').value,
+                    village: document.getElementById('editVillage').value,
+                    district: document.getElementById('editDistrict').value,
+                    paymentId: response.razorpay_payment_id // पेमेंटचा पुरावा सेव्ह करण्यासाठी
+                };
+
+                // 2. फाईल्स घेणे
+                const aadhaarFile = document.getElementById('editAadhaarDoc').files[0];
+                const consentFile = document.getElementById('editConsentDoc').files[0];
+                const licenseFile = document.getElementById('editLicenseDoc').files[0];
+
+                async function uploadFile(file, docName) {
+                    const storageRef = ref(storage, `worker_documents/${userDocId}/${docName}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    return await getDownloadURL(storageRef);
+                }
+
+                // 3. फाईल्स अपलोड
+                if (aadhaarFile) { updatedData.aadhaarDocUrl = await uploadFile(aadhaarFile, "Aadhaar"); updatedData.hasAadhaarDoc = true; }
+                if (consentFile) { updatedData.consentDocUrl = await uploadFile(consentFile, "Consent"); }
+                if (licenseFile) { updatedData.licenseDocUrl = await uploadFile(licenseFile, "License"); }
+
+                // 4. Firebase मध्ये अपडेट
+                await updateDoc(workerRef, updatedData);
+                
+                fetchedUserData = { ...fetchedUserData, ...updatedData };
+                alert("✅ Payment Successful! Profile Updated.");
+                
+                // फॉर्म रिसेट
+                document.getElementById('editAadhaarDoc').value = "";
+                document.getElementById('editConsentDoc').value = "";
+                document.getElementById('editLicenseDoc').value = "";
+                editModal.style.display = "none";
+                
+                saveBtn.innerText = "💾 Save Changes";
+                saveBtn.disabled = false;
+                
+                showProfilePage(); 
+                setupIdCard(fetchedUserData);
+
+            } catch (error) {
+                console.error("Update Error: ", error);
+                alert("❌ Payment successful, but failed to update profile.");
+                saveBtn.innerText = "💾 Save Changes";
+                saveBtn.disabled = false;
+            }
+        },
+        "modal": {
+            "ondismiss": function(){
+                 // जर युजरने पेमेंट न करता बॉक्स बंद केला
+                 saveBtn.innerText = "💾 Save Changes";
+                 saveBtn.disabled = false;
+            }
+        }
+    };
+    
+    // Razorpay ओपन करणे
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+}
     </script>
 </body>
 </html>
-    </script>
-</body>
-</html>
+   

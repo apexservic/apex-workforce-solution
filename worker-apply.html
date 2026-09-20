@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Worker Apply Form</title>
-    <link rel="icon" type="image/png" href="Apex.logo.png">3
+    <title>Worker Apply Form</title>
+    <link rel="icon" type="image/png" href="Apex.logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App & Firestore CDN v10.8.0 -->
@@ -514,6 +514,16 @@
                     </div>
                 </div>
                 </div>
+                <!-- नवीन: सर्वांसाठी कॉमन अटी व शर्ती Checkbox -->
+                <div class="form-group full-width" style="background-color: #fff9e6; padding: 15px; border-radius: 8px; border: 1px solid #ffcc80; margin-top: 25px; flex-direction: row; align-items: flex-start; gap: 15px;">
+                    <input type="checkbox" id="finalDeclaration" required style="width: 22px; height: 22px; margin-top: 2px; cursor: pointer; flex-shrink: 0;">
+                    <label for="finalDeclaration" style="margin: 0; font-size: 14px; cursor: pointer; color: #000; line-height: 1.6;">
+                        <b>I agree that: </b>This is an online service only for providing information about government schemes/jobs and for filling out forms. No direct job guarantee is provided through this service.<br>
+                        <span style="color: #d35400; font-weight: bold; display: inline-block; margin-top: 8px;">
+                            I agree to the above <a href="terms.html" target="_blank" style="color: blue; text-decoration: underline;">terms and conditions</a>.*
+                        </span>
+                    </label>
+                </div>
                 <!-- सबमिट बटन -->
             <button type="submit" class="submit-btn">Submit Application & Pay</button>
         </form>
@@ -663,7 +673,6 @@
                     // अचूक वय दाखवा
                     ageField.value = age + " Year";
                     ageField.style.color = "#495057"; // नॉर्मल रंग
-                    
                     // --- नवीन ॲडव्हान्स लॉजिक (Show/Hide) ---
                     if (age >= 1 && age <= 13) {
                         ageCategoryField.value = "1-13 Age";
@@ -750,8 +759,8 @@
                 e.preventDefault(); // पेज रिफ्रेश थांबवते
                 
                 // --- नवीन: आपोआप 199 रुपयांचा QR कोड तयार करण्याचे लॉजिक ---
-                let upiId = "sanjanaarne@oksbi"; // तुमचा खरा UPI ID
-                let payeeName = "APEX Manpower Service";
+                let upiId = "Q059243972@ybl"; // तुमचा खरा UPI ID
+                let payeeName = "APEX WORKFORCE SOLUTION";
                 let amount = "199"; // इथे आपण 199 फिक्स केले आहेत!
                 
                 let upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR`;

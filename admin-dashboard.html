@@ -23,7 +23,7 @@
                     📊 Data Dashboard <span class="arrow">&#9660;</span>
                 </button>
                 <ul class="dropdown-container" id="dataDropdown">
-                    <li><a href="#">↳ Client Application</a></li>
+                    <li><a href="#" onclick="showClientTable(event)">↳ Client Application</a></li>
                     <li><a href="#" onclick="showWorkerTable(event)">↳ Worker Application</a></li>
 </ul>
             </li>
@@ -78,6 +78,28 @@
                     </thead>
                     <tbody id="adminTableBody">
                         <!-- फायरबेसवरून डेटा इथे ऑटोमॅटिक येईल -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Client Applications Section (नवीन) -->
+        <div class="client-content-area" style="display: none; padding: 30px;">
+            <h3>Client Requirements</h3>
+            <div style="overflow-x: auto; margin-top: 20px;">
+                <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; background: white;">
+                    <thead>
+                        <tr style="background-color: #ff6600; color: white;">
+                            <th style="padding: 10px;">Date</th>
+                            <th style="padding: 10px;">Company Name</th>
+                            <th style="padding: 10px;">Contact Person</th>
+                            <th style="padding: 10px;">Mobile</th>
+                            <th style="padding: 10px;">Required Staff</th>
+                            <th style="padding: 10px;">Count</th>
+                            <th style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientTableBody">
+                        <!-- क्लायंटचा डेटा इथे येईल -->
                     </tbody>
                 </table>
             </div>
@@ -264,21 +286,33 @@
                 }
             }
         }
-        // १. Activity Logs दाखवणारे फंक्शन
+        // १. Activity Logs दाखवणे
         function showActivityLogs(event) {
             event.preventDefault();
             document.querySelector('.content-area').style.display = "none";
+            let clientArea = document.querySelector('.client-content-area');
+            if(clientArea) clientArea.style.display = "none";
             document.querySelector('.activity-log-area').style.display = "block";
             loadActivityLogs();
         }
 
-        // २. Worker Table दाखवताना Activity Log लपवण्यासाठी जुन्या फंक्शनमध्ये छोटा बदल
+        // २. Worker Table दाखवणे
         function showWorkerTable(event) {
             event.preventDefault(); 
+            document.querySelector('.activity-log-area').style.display = "none";
+            let clientArea = document.querySelector('.client-content-area');
+            if(clientArea) clientArea.style.display = "none";
             document.querySelector('.content-area').style.display = "block";
-            let activityArea = document.querySelector('.activity-log-area');
-            if(activityArea) activityArea.style.display = "none";
             loadWorkerApplications();
+        }
+
+        // ३. Client Table दाखवणे (नवीन)
+        function showClientTable(event) {
+            event.preventDefault();
+            document.querySelector('.content-area').style.display = "none";
+            document.querySelector('.activity-log-area').style.display = "none";
+            document.querySelector('.client-content-area').style.display = "block";
+            loadClientApplications(); // क्लायंट डेटा फेच करणारे फंक्शन
         }
 
         // ३. Activity Logs चा डेटा फायरबेसवरून फेच करणे (Details सह)
@@ -378,9 +412,13 @@
             let inputText = document.getElementById("searchBox").value.toLowerCase().trim();
             let searchWords = inputText.split(/\s+/); 
             
-            let contentArea = document.querySelector('.content-area');
-            let isWorkerTable = contentArea.style.display !== "none"; // सध्या कोणते टेबल चालू आहे
-            let activeTableBody = isWorkerTable ? document.getElementById("adminTableBody") : document.getElementById("activityTableBody");
+            let isWorkerTable = document.querySelector('.content-area').style.display !== "none";
+            let isClientTable = document.querySelector('.client-content-area') && document.querySelector('.client-content-area').style.display !== "none";
+            
+            let activeTableBody = null;
+            if (isWorkerTable) activeTableBody = document.getElementById("adminTableBody");
+            else if (isClientTable) activeTableBody = document.getElementById("clientTableBody");
+            else activeTableBody = document.getElementById("activityTableBody");
 
             let suggestionsBox = document.getElementById("searchSuggestions");
             suggestionsBox.innerHTML = ""; // जुने सजेशन्स क्लीन करणे
@@ -556,6 +594,117 @@
                 console.error("SMS Error:", error);
                 alert("❌ Something went wrong due to a technical issue.");
             });
+        }
+        // क्लायंटचा डेटा फायरबेसवरून आणणे आणि टेबल बनवणे
+        function loadClientApplications() {
+            let tableBody = document.getElementById('clientTableBody');
+            
+            db.collection("client_applications").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+                if(tableBody) tableBody.innerHTML = ""; 
+                
+                snapshot.forEach((doc) => {
+                    let data = doc.data();
+                    let docId = doc.id;
+                    
+                    // Date Format करणे
+                    let dateStr = "N/A";
+                    if (data.timestamp) {
+                        let dateObj = data.timestamp.toDate();
+                        dateStr = dateObj.toLocaleDateString('en-GB');
+                    }
+                    
+                    // १. मुख्य रो (Main Row)
+                    let mainRow = `<tr>
+                        <td style="padding: 10px;">${dateStr}</td>
+                        <td style="padding: 10px; font-weight: bold; color: #0b2545; cursor: pointer; text-decoration: underline;" onclick="toggleClientDetails('${docId}')">${data.companyName || 'N/A'}</td>
+                        <td style="padding: 10px;">${data.contactPerson || ''}</td>
+                        <td style="padding: 10px;">${data.mobile || ''}</td>
+                        <td style="padding: 10px;">${data.staffCategory || ''} - ${data.jobPosition || ''}</td>
+                        <td style="padding: 10px; font-weight: bold; color: #ff6600;">${data.workersCount || ''}</td>
+                        <td style="padding: 10px;">
+                            <button class="view-btn" onclick="toggleClientDetails('${docId}')" style="background-color: #0b2545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">View Details</button>
+                            <button onclick="deleteClient('${docId}', '${data.requirementLetterUrl ? data.requirementLetterUrl : ''}')" style="background-color: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px;">Delete</button>
+                        </td>
+                    </tr>`;
+                    
+                    // २. डिटेल्स बॉक्स (A to Z माहिती)
+                    let detailsRow = `<tr id="client-details-${docId}" class="details-row" style="display: none;">
+                        <td colspan="7" style="padding: 0;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; padding: 20px; border-left: 4px solid #ff6600; background: #fafafa; font-size: 14px; color: #0b2545;">
+                                
+                                <div>
+                                    <h4 style="color: #ff6600; margin-bottom: 10px;">🏢 Company Info</h4>
+                                    <p style="margin:5px 0;"><strong>Email:</strong> ${data.email || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Designation:</strong> ${data.designation || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Industry:</strong> ${data.industryType || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>GST No:</strong> ${data.gstNumber || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Address:</strong> ${data.companyAddress || '-'}</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 style="color: #ff6600; margin-bottom: 10px;">👥 Requirement Details</h4>
+                                    <p style="margin:5px 0;"><strong>Location:</strong> ${data.workLocation || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Salary/Budget:</strong> ${data.salary || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Duty Hours:</strong> ${data.dutyHours || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Joining Date:</strong> ${data.joiningDate || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Experience Req:</strong> ${data.experience || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Qualification:</strong> ${data.qualification || '-'}</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 style="color: #ff6600; margin-bottom: 10px;">✅ Other Info</h4>
+                                    <p style="margin:5px 0;"><strong>Contract Duration:</strong> ${data.contractDuration || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Gender Pref:</strong> ${data.gender || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Age Limit:</strong> ${data.ageLimit || '-'}</p>
+                                    <p style="margin:5px 0;"><strong>Facilities:</strong> ${data.facilities ? data.facilities.join(', ') : 'None'}</p>
+                                    <p style="margin:5px 0;"><strong>Description:</strong> ${data.jobDescription || '-'}</p>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        ${data.requirementLetterUrl ? `<a href="${data.requirementLetterUrl}" target="_blank" style="padding: 6px 12px; background: #0b2545; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">👁️ View Requirement Letter</a>` : '<span style="color: red; font-size: 13px;">❌ No Document Uploaded</span>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>`;
+                    
+                    if(tableBody) {
+                        tableBody.innerHTML += mainRow + detailsRow;
+                    }
+                });
+            });
+        }
+
+        // क्लायंटची माहिती उघडणे/बंद करणे
+        function toggleClientDetails(docId) {
+            let detailsRow = document.getElementById(`client-details-${docId}`);
+            if (detailsRow) {
+                detailsRow.style.display = detailsRow.style.display === "table-row" ? "none" : "table-row";
+            }
+        }
+        
+        // क्लायंटचा फॉर्म आणि त्याचे डॉक्युमेंट दोन्ही फायरबेसमधून कायमचे डिलीट करणे
+        function deleteClient(docId, fileUrl) {
+            if (confirm("⚠️Are you sure you want to delete this Client Application?")) {
+                
+                // १. आधी डेटाबेसमधून क्लायंटचा फॉर्म डिलीट करणे
+                db.collection("client_applications").doc(docId).delete().then(() => {
+                    
+                    // २. जर क्लायंटने डॉक्युमेंट अपलोड केले असेल, तर ते Firebase Storage मधूनही डिलीट करणे
+                    if (fileUrl && fileUrl.trim() !== "") {
+                        let fileRef = firebase.storage().refFromURL(fileUrl);
+                        fileRef.delete().then(() => {
+                            console.log("Attached document deleted from storage.");
+                        }).catch((error) => {
+                            console.error("Error deleting file:", error);
+                        });
+                    }
+
+                    alert("🗑️ Client Application and attached files deleted successfully!");
+                }).catch((error) => {
+                    console.error("Error removing document: ", error);
+                    alert("❌ Error: Failed to delete.");
+                });
+            }
         }
         // ---------------- ऑटो-ॲक्सेप्ट लॉजिक (Auto-Accept after 5 mins) ----------------
         // हा कोड दर १ मिनिटाने (60000 ms) बॅकग्राउंडला रन होईल

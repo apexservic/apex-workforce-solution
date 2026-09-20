@@ -6,6 +6,10 @@
     <title>Client Apply</title>
     <link rel="icon" type="image/png" href="Apex.logo.png">
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase App, Firestore & Storage (हे तिन्ही लागतील) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
@@ -27,7 +31,7 @@
             <p class="form-subtitle">Please fill out the form below with your manpower requirements.
             Our team will contact you shortly.</p>
 
-            <form action="#" method="POST" enctype="multipart/form-data">
+            <form id="clientForm" action="#" method="POST" enctype="multipart/form-data">
                 
                 <!-- १. Company Details -->
                 <div class="form-section">
@@ -175,6 +179,112 @@
     <footer class="footer">
         <p>&copy; 2026 APEX Workforce Solution. All Rights Reserved.</p>
     </footer>
+    <script>
+    // Tujhi Firebase Configuration ithe tak (jar aadhi takli nasel tar)
+    const firebaseConfig = {
+  apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
+  authDomain: "apex-245ed.firebaseapp.com",
+  projectId: "apex-245ed",
+  storageBucket: "apex-245ed.firebasestorage.app",
+  messagingSenderId: "1082704594683",
+  appId: "1:1082704594683:web:5c1c67afeb0eadfb68d25e"
+};
+    // Firebase initialize kar
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const storage = firebase.storage();
 
+    // Form submit jhalyavar kay karycha tyachi process
+    document.getElementById('clientForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Page refresh hone thambvte
+
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.innerText = "Submitting Please Wait...";
+        submitBtn.disabled = true;
+
+        try {
+            // Form madhil sarv data ghene
+            const formData = new FormData(this);
+            const dataObj = Object.fromEntries(formData.entries());
+
+            // Facilities che Checkboxes ektra ghene
+            const facilities = [];
+            document.querySelectorAll('input[name="facilities"]:checked').forEach(checkbox => {
+                facilities.push(checkbox.value);
+            });
+            dataObj.facilities = facilities;
+
+            // Document File Upload karnyachi process
+            const fileInput = document.querySelector('input[name="requirementLetter"]');
+            let fileUrl = "";
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const storageRef = storage.ref('client_documents/' + Date.now() + '_' + file.name);
+                await storageRef.put(file); // File Firebase Storage la upload hote
+                fileUrl = await storageRef.getDownloadURL(); // File chi link ghene
+            }
+            
+            dataObj.requirementLetterUrl = fileUrl; // File chi link data madhe add karne
+            delete dataObj.requirementLetter; // Data base madhe jatana normal file object kadhun takne
+
+            // Firestore chya 'client_applications' madhe data save karne
+            await db.collection('client_applications').add({
+                ...dataObj,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            alert("Your requirement has been submitted successfully!");
+            this.reset(); // Form clear karne
+
+        } catch (error) {
+            console.error("Error submitting form: ", error);
+            alert("Error! Please try again.");
+        } finally {
+            submitBtn.innerText = "Submit Requirement";
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+<!-- Fast2SMS integration script -->
+<script>
+document.getElementById("clientForm").addEventListener("submit", function(event) {
+    event.preventDefault(); 
+
+    let mobileNumber = document.querySelector('input[name="mobile"]').value;
+    
+    // YETHE TUZHI KHARIKHURI API KEY TAK
+    let apiKey = "F5I0OKntM1sX6WR8oQJ9PkSVmvBigGlfpde2yhEwqYANHaDLCxQbwlJdn67gIvUO5iVDr8L2WTZXyB0S"; 
+    
+    // Message thoda chota thevla ahe free route sathi
+    let smsMessage = "Thank you for contacting APEX Workforce Solution. We will connect soon!";
+
+    // Updated API URL (route=q vaprun ani sender_id kadhun)
+    let url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=q&message=${encodeURIComponent(smsMessage)}&language=english&flash=0&numbers=${mobileNumber}`;
+
+    fetch(url)
+    .then(response => {
+        if (!response.ok) {
+            // Jar API ne parat error dili tar ti directly catch madhe jail
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if(data.return === true) {
+            alert("Form submitted!");
+            document.getElementById("clientForm").reset(); 
+        } else {
+            alert("SMS Error: " + data.message[0]);
+        }
+    })
+    .catch(error => {
+        console.error("Fast2SMS Error Details:", error);
+        alert("Try Again.");
+    });
+});
+</script>
 </body>
 </html>
