@@ -662,7 +662,7 @@
             let maskedAadhaar = data.aadhaarNumber ? "XXXXXXXX" + data.aadhaarNumber.slice(-4) : "N/A";
 
             // डेटा HTML मध्ये मॅप करणे
-            document.getElementById('profPhoto').src = data.profilePhoto || "https://via.placeholder.com/220x260?text=No+Photo";
+            document.getElementById('profPhoto').src = data.profilePhotoUrl || "https://via.placeholder.com/220x260?text=No+Photo";
             document.getElementById('profName').innerText = data.fullName || "N/A";
             document.getElementById('profMobile').innerText = "+91 " + (data.mobileNumber || "N/A");
             
@@ -896,7 +896,7 @@
         function setupIdCard(data) {
             let maskedAadhaar = data.aadhaarNumber ? "XXXX-XXXX-" + data.aadhaarNumber.slice(-4) : "N/A";
             
-            document.getElementById('idCardPhoto').src = data.profilePhoto || "https://via.placeholder.com/150";
+            document.getElementById('idCardPhoto').src = data.profilePhotoUrl || "https://via.placeholder.com/150";
             document.getElementById('idCardRegNo').innerText = data.regNo || "N/A";
             document.getElementById('idCardName').innerText = data.fullName || "N/A";
             document.getElementById('idCardAadhar').innerText = maskedAadhaar;
