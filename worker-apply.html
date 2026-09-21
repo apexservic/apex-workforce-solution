@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0" />
     <title>Worker Apply Form</title>
     <link rel="icon" type="image/png" href="Apex.logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,8 +25,66 @@
 
         body {
             background-color: #f4f6f9;
-            padding: 40px 20px;
             margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* यामुळे फुटर नेहमी तळाला चिकटून राहील */
+        }
+        /* --- नवीन Header डिझाईन --- */
+        .main-header {
+            background-color: #0b2545;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .header-logo img {
+            height: 70px;
+            width: 70px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            object-fit: contain;
+            margin-right: 20px;
+        }
+        .header-text h1 {
+            color: #ff6600;
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .header-text p {
+            color: white;
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* --- नवीन Footer डिझाईन --- */
+        /* --- नवीन Footer डिझाईन --- */
+        .main-footer {
+            background-color: #0b2545;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto; /* यामुळे फुटर आपोआप सगळ्यात खाली ढकलले जाईल */
+            margin-bottom: 0;
+            border-top: 4px solid #ff6600;
+            width: 100%;
+        }
+        .main-footer p {
+            margin: 0;
+            font-size: 15px;
         }
 
         .form-container {
@@ -34,7 +95,8 @@
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             border-top: 6px solid #ff6600; 
-            margin: 0 auto; /* ही एक लाईन फॉर्मला डावीकडून आणि उजवीकडून बरोबर मध्यभागी आणेल */
+            margin: 140px auto 40px auto; /* 140px मुळे फॉर्म हेडरच्या खाली लपणार नाही */
+            flex-grow: 1; /* रिकामी जागा भरून काढण्यासाठी */
         }
 
         .form-header {
@@ -241,6 +303,16 @@
 <body>
 <!-- Google Translate Floating Widget -->
     <div id="google_translate_element" class="floating-translate"></div>
+    <!-- नवीन: टॉप Header -->
+    <header class="main-header">
+        <div class="header-logo">
+            <img src="Apex.logo.png" alt="APEX Logo">
+        </div>
+        <div class="header-text">
+            <h1>APEX WORKFORCE SOLUTION</h1>
+            <p>PEOPLE. POWER. PROGRESS.</p>
+        </div>
+    </header>
     <div class="form-container">
         <div class="form-header">
             <h2>Worker Apply Form</h2>
@@ -520,37 +592,18 @@
                     <label for="finalDeclaration" style="margin: 0; font-size: 14px; cursor: pointer; color: #000; line-height: 1.6;">
                         <b>I agree that: </b>This is an online service only for providing information about government schemes/jobs and for filling out forms. No direct job guarantee is provided through this service.<br>
                         <span style="color: #d35400; font-weight: bold; display: inline-block; margin-top: 8px;">
-                            I agree to the above <a href="terms.html" target="_blank" style="color: blue; text-decoration: underline;">terms and conditions</a>.*
+                            I agree to the above <a href="terms.html" target="_blank" style="color: blue.; text-decoration: underline;">terms and conditions</a>.*
                         </span>
                     </label>
                 </div>
                 <!-- सबमिट बटन -->
-            <button type="submit" class="submit-btn">Submit Application & Pay</button>
+            <button type="submit" class="submit-btn">Submit & Pay Registration Fee</button>
         </form>
     </div>
-    <!-- QR Code Payment Modal (फॉर्मच्या बाहेर) -->
-    <div id="qrModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Payment Required</h3>
-            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Please pay <strong>₹199</strong> to complete registration.</p>
-            
-            <!-- येथे QR कोड जनरेट होईल -->
-            <img id="qrCodeImg" class="qr-image" src="UPI.jpeg" alt="UPI QR Code">
-            
-            <p style="color: dimgray; font-size: 13px; margin-top: 5px;">Scan using PhonePe, GPay, or Paytm</p>
-            <!-- नवीन: UTR नंबर इनपुट -->
-            <div style="text-align: left; margin-bottom: 15px; margin-top: 15px;">
-                <label for="utrNumber" style="display: block; font-size: 14px; font-weight: bold; color: #0b2545; margin-bottom: 5px;">Transaction Id/ UTR Number (12 Digit) *</label>
-                <input type="text" id="utrNumber" maxlength="12" placeholder="EX. 123456789012" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; box-sizing: border-box;">
-                
-                <!-- एरर मेसेज (सुरुवातीला लपवलेला) -->
-                <small id="utrErrorMsg" style="color: red; font-size: 13px; display: none; margin-top: 5px; font-weight: bold;">**Please enter a valid 12-digit UTR number.**</small>
-            </div>
-            
-            <button type="button" class="done-btn" onclick="completePayment()">Done / Payment Completed</button>
-        </div>
-    </div>
-
+    <!-- नवीन: बॉटम Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2026 APEX Workforce Solution. All Rights Reserved.</p>
+    </footer>
     <!-- =====================================
          २. JavaScript लॉजिक (Smart Features)
     ====================================== -->
@@ -750,26 +803,6 @@
             }
         }
 
-        // ६. फॉर्म सबमिट झाल्यावर पेज रिफ्रेश थांबवणे आणि QR Modal दाखवणे
-        let form = document.getElementById('smartWorkerForm');
-        let qrModal = document.getElementById('qrModal');
-
-        if(form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // पेज रिफ्रेश थांबवते
-                
-                // --- नवीन: आपोआप 199 रुपयांचा QR कोड तयार करण्याचे लॉजिक ---
-                let upiId = "Q059243972@ybl"; // तुमचा खरा UPI ID
-                let payeeName = "APEX WORKFORCE SOLUTION";
-                let amount = "199"; // इथे आपण 199 फिक्स केले आहेत!
-                
-                let upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR`;
-                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
-                
-                document.getElementById('qrCodeImg').src = qrApiUrl; // जुन्या फोटोच्या जागी नवीन 199 चा QR टाका
-                qrModal.style.display = "flex"; // QR पॉप-अप उघडा
-            });
-        }
         // Firebase Initialize (तुमच्या दिलेल्या API Key सह)
         const firebaseConfig = {
             apiKey: "AIzaSyDxgRYIMKTpI0KFnECRBsi4AJraBglFo90",
@@ -793,51 +826,48 @@
             await fileRef.put(file);
             return await fileRef.getDownloadURL(); // कायमस्वरूपी लिंक मिळवा
         }
+    </script>
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'mr', /* तुमच्या पेजची मुख्य भाषा (मराठी) */
+                includedLanguages: 'en,mr,hi', /* कोणत्या भाषांमध्ये बदलता येईल (इंग्रजी, मराठी, हिंदी) */
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+        // ६. फॉर्म सबमिट झाल्यावर थेट Firebase मध्ये डेटा सेव्ह करणे
+        let smartForm = document.getElementById('smartWorkerForm');
 
-        // UTR Validation आणि Firebase मध्ये डेटा सेव्ह करण्याचे फंक्शन
-        // UTR Validation आणि Firebase मध्ये डेटा + फाईल्स सेव्ह करण्याचे फंक्शन
-        async function completePayment() {
-            let utrInput = document.getElementById('utrNumber').value;
-            let utrError = document.getElementById('utrErrorMsg');
-            let qrModal = document.getElementById('qrModal');
-            let form = document.getElementById('smartWorkerForm');
-            let doneBtn = document.querySelector('.done-btn'); // बटनाचा संदर्भ
-
-            // UTR नंबर नक्की १२ अंकी (फक्त आकडे) आहे का तपासणे
-            let utrPattern = /^\d{12}$/;
-
-            if (utrPattern.test(utrInput)) {
-                utrError.style.display = "none"; 
+        if(smartForm) {
+            smartForm.addEventListener('submit', async function(e) {
+                e.preventDefault(); // पेज रिफ्रेश थांबवते
+                
+                let submitBtn = document.querySelector('.submit-btn');
                 
                 // अपलोड सुरु होताना बटनावर मेसेज दाखवा आणि बटन लॉक करा
-                doneBtn.innerText = "⏳ Uploading Documents... Please wait";
-                doneBtn.disabled = true;
-                doneBtn.style.backgroundColor = "#555";
+                submitBtn.innerText = "⏳ Uploading Documents... Please wait";
+                submitBtn.disabled = true;
+                submitBtn.style.backgroundColor = "#555";
 
                 try {
-                    // १. फाईल्स Firebase Storage मध्ये अपलोड करून लिंक्स (URL) मिळवणे
+                    // १. फाईल्स Firebase Storage मध्ये अपलोड
                     let profilePhotoUrl = await uploadFileToFirebase(document.getElementById('photoInput').files[0], 'ProfilePhotos');
-                    
                     let aadhaarFile = (document.getElementById('aadhaarDoc') && document.getElementById('aadhaarDoc').files[0]) || 
                                       (document.getElementById('adultAadhaarDoc') && document.getElementById('adultAadhaarDoc').files[0]);
                     let aadhaarDocUrl = await uploadFileToFirebase(aadhaarFile, 'AadhaarDocs');
-                    
                     let consentDocUrl = await uploadFileToFirebase(document.getElementById('parentConsent') ? document.getElementById('parentConsent').files[0] : null, 'ConsentDocs');
                     let licenseDocUrl = await uploadFileToFirebase(document.getElementById('licenseDoc') ? document.getElementById('licenseDoc').files[0] : null, 'LicenseDocs');
 
                     // २. फॉर्ममधील सर्व टेक्स्ट डेटा गोळा करणे
                     let roleEle = document.querySelector('input[name="userRole"]:checked');
-
-                    // तिन्ही नावे घेणे
                     let fName = document.getElementById('firstName').value;
                     let mName = document.getElementById('middleName').value;
                     let lName = document.getElementById('surname').value;
 
                     let workerData = {
-                        firstName: fName,
-                        middleName: mName,
-                        surname: lName,
-                        fullName: fName + " " + mName + " " + lName, // डेटाबेसमध्ये पूर्ण नाव सुद्धा एकत्र सेव्ह होईल
+                        firstName: fName, middleName: mName, surname: lName,
+                        fullName: fName + " " + mName + " " + lName, 
                         gender: document.getElementById('gender').value,
                         casteCategory: document.getElementById('casteCategory').value,
                         maritalStatus: document.getElementById('maritalStatus').value,
@@ -861,14 +891,8 @@
                         employmentType: document.getElementById('employmentType') ? document.getElementById('employmentType').value : "",
                         expYears: document.getElementById('expYears') ? document.getElementById('expYears').value : "",
                         
-                        // --- डॉक्युमेंट्सच्या मिळवलेल्या लिंक्स (URLs) सेव्ह करणे ---
-                        profilePhotoUrl: profilePhotoUrl,
-                        aadhaarDocUrl: aadhaarDocUrl,
-                        consentDocUrl: consentDocUrl,
-                        licenseDocUrl: licenseDocUrl,
-                        
-                        utrNumber: utrInput,
-                        status: "Pending",
+                        profilePhotoUrl: profilePhotoUrl, aadhaarDocUrl: aadhaarDocUrl, consentDocUrl: consentDocUrl, licenseDocUrl: licenseDocUrl,
+                        status: "Registered",
                         registrationDate: new Date().toLocaleString()
                     };
 
@@ -887,40 +911,23 @@
                     await db.collection("workers").add(workerData);
 
                     // ४. सक्सेस मेसेज आणि रिसेट
-                    qrModal.style.display = "none"; 
-                    alert("✅ Registration Successful!\nYour data and all documents have been securely saved.");
-                    if(form) form.reset();
-                    document.getElementById('utrNumber').value = ""; 
+                    alert("✅ Registration Successful!\nYour data and documents have been securely saved.");
+                    smartForm.reset();
                     
-                    doneBtn.innerText = "Done / Payment Completed";
-                    doneBtn.disabled = false;
-                    doneBtn.style.backgroundColor = "#2e7d32";
-                    // नवीन: फॉर्म यशस्वी भरल्यावर होम पेजवर जाणे
+                    submitBtn.innerText = "Submit Application";
+                    submitBtn.disabled = false;
+                    submitBtn.style.backgroundColor = "#ff6600";
+                    
                     window.location.href = "index.html";
 
                 } catch (error) {
-                    console.error("Error uploading/saving: ", error);
-                    alert("❌ Server Error: There was a problem uploading the documents. Please check your internet connection and try again.");
-                    doneBtn.innerText = "Done / Payment Completed";
-                    doneBtn.disabled = false;
-                    doneBtn.style.backgroundColor = "#2e7d32";
+                    console.error("Error saving data: ", error);
+                    alert("❌ Server Error: There was a problem uploading. Please check your internet connection.");
+                    submitBtn.innerText = "Submit Application";
+                    submitBtn.disabled = false;
+                    submitBtn.style.backgroundColor = "#ff6600";
                 }
-
-            } else {
-                utrError.style.display = "block"; 
-                document.getElementById('utrNumber').style.borderColor = "red";
-                setTimeout(() => { document.getElementById('utrNumber').style.borderColor = "#ccc"; }, 2000);
-            }
-        }
-    </script>
-    <!-- Google Translate Script -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'mr', /* तुमच्या पेजची मुख्य भाषा (मराठी) */
-                includedLanguages: 'en,mr,hi', /* कोणत्या भाषांमध्ये बदलता येईल (इंग्रजी, मराठी, हिंदी) */
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
+            });
         }
     </script>
     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
