@@ -340,7 +340,7 @@
                         <td style="padding: 10px;">
                             <button onclick="toggleActivityDetails('${docId}')" style="background-color: #0b2545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 8px; width: 100%;">👁️ View Details</button><br>
                             
-                            ${(!data.status || data.status === 'Pending') ? 
+                            ${(!data.status || data.status === 'Pending' || data.status === 'Registered') ? 
                             `<div style="display: flex; gap: 5px; justify-content: center;">
                                 <button onclick="updateWorkerStatus('${docId}', 'Accepted', '${data.mobileNumber}', '${data.fullName}')" style="background-color: #2e7d32; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">✅ Accept</button>
                                 <button onclick="updateWorkerStatus('${docId}', 'Rejected', '${data.mobileNumber}', '${data.fullName}')" style="background-color: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">❌ Reject</button>
