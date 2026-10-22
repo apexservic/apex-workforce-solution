@@ -1,179 +1,191 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-    <title>APEX WORKFORCE SOLUTION - Home</title>
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>APEX WORKFORCE SOLUTION</title>
     <link rel="icon" type="image/png" href="Apex.logo.png">
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase App & Firestore CDN v10.8.0 -->
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase App & Firestore CDN -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- Google Translate Widget Container -->
-<div id="google_translate_element"></div>
 
-    <!-- हेडर सेक्शन (Logo, Name, Motto आणि Menu) -->
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-left">
+            <span><i class="fa-solid fa-location-dot"></i> Market Yard, Shirur, Maharashtra 412210</span>
+            <span><i class="fa-solid fa-phone"></i> +91 8698588681</span>
+            <span><i class="fa-solid fa-envelope"></i> info@apexworkforcesolution.in</span>
+        </div>
+        <div class="top-right">
+            <span>Follow Us :</span>
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+    </div>
+
+    <!-- Header / Navbar -->
     <header class="header">
         <div class="logo-container">
-            <!-- लोगोची इमेज -->
             <img src="Apex.logo.png" alt="Apex Logo" class="logo">
-            
-            <!-- कंपनीचे नाव आणि मोटो -->
             <div class="company-info">
                 <h1>APEX WORKFORCE SOLUTION</h1>
                 <p class="motto">PEOPLE. POWER. PROGRESS.</p>
             </div>
         </div>
-
-        <!-- नेव्हिगेशन मेन्यू -->
         <nav class="navbar">
             <ul>
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="worker-apply.html" target="_blank">Worker Apply</a></li>
+                <li><a href="#" class="active-btn">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="#">Our Services <i class="fa-solid fa-angle-down"></i></a></li>
+                <li><a href="worker-apply.html" target="_blank">Apply for Job</a></li>
                 <li><a href="client-apply.html" target="_blank">Client Apply</a></li>
-                <li><a href="worker-profile.html" target="_blank">Worker Profile</a></li>
-                <li><a href="trainer.html" target="_blank">Online Exam Trainer</a></li>
-
+                <li><a href="#">Our Projects</a></li>
+                <li><a href="trainer.html" target="_blank">Contact Us</a></li>
             </ul>
         </nav>
+        <div class="header-btn">
+            <a href="#" class="quote-btn"><i class="fa-brands fa-whatsapp"></i> Get a Quote</a>
+        </div>
     </header>
 
-    <!-- मुख्य भाग -->
-   <!-- मुख्य भाग (Image Slider) -->
-    <main class="main-content">
-        <div class="slider">
-            <figure>
-                <img src="img1.png" alt="Slide 1">
-                <img src="img3.png" alt="Slide 2">
-                <img src="img5.png" alt="Slide 3">
-                <img src="img4.png" alt="Slide 5"> 
-                <img src="img1.png" alt="Slide 1"> <!-- लूप पूर्ण करण्यासाठी पहिली इमेज पुन्हा टाकली आहे -->
-            </figure>
-        </div>
-    </main>
-    <!-- १. आमच्याबद्दल (About Us) -->
-    <section class="about-section">
-        <div class="container">
-            <h2 class="section-title">ABOUT US</h2>
-            <h3 class="motto-text">"People. Power. Progress."</h3>
-            <p>We provide the best manpower solutions across various sectors, including manufacturing, construction, healthcare, hospitality, and logistics. Providing the right workforce according to our clients’ specific requirements is what defines us.</p>
-            <p><strong>Head Office:</strong> Shirur, Pune, Maharashtra - 412210</p>
-        </div>
-    </section>
-    <!-- Our Team Section -->
-    <section class="team-section">
-        <div class="container">
-            <h2 class="section-title">OUR TEAM</h2>
-            <div class="team-cards-container">
-                <!-- येथे तुमच्या टीमच्या इमेजेसची नावे टाका -->
-                <img src="Apx1.jpeg" alt="Team Member 1" class="team-img">
-                <img src="Apx2.jpeg" alt="Team Member 2" class="team-img">
-                <img src="Apx3.jpeg" alt="Team Member 3" class="team-img">
+    <!-- Hero Banner Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <p class="hero-subtitle">MANPOWER | CLEANING | FACILITY SERVICES</p>
+            <h1 class="hero-title">PEOPLE. POWER.<br>PROGRESS.</h1>
+            <p class="hero-desc">Reliable manpower and professional cleaning solutions for a stronger, cleaner and smarter tomorrow.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn-primary">Hire Manpower <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="#" class="btn-outline">Our Services <i class="fa-solid fa-arrow-right"></i></a>
             </div>
+        </div>
+        <div class="hero-image-area">
+            <img src="img1.png" alt="Apex Banner" style="width: 100%; max-width: 550px; height: auto;">
+        </div>
+        <div class="hero-features-ribbon">
+            <span>✔️ Verified Workforce</span>
+            <span>👥 Skilled & Unskilled Manpower</span>
+            <span>🏢 Pan India Service</span>
+            <span>⚙️ Quality & Reliability</span>
         </div>
     </section>
 
-    <!-- २. पत्ता आणि गूगल मॅप (Address & Map) -->
-    <section class="map-section">
-        <div class="container flex-container">
-            <div class="address-box">
-                <h2 class="section-title" style="color: white;">Our Address</h2>
-                <p><strong>APEX Man Power Service</strong></p>
-                <p>Shirur, Pune,<br>Maharashtra - 412210</p>
-                <p>📞 8698588681 / 8999974287 / 8010461355</p>
-                <p>✉️ support@apexworkforcesolution.in</p>
-            </div>
-            <div class="map-box">
-                <!-- शिरूर, पुणे चा गुगल मॅप -->
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120974.7709540051!2d74.2987163!3d18.8286208!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc326c596e38bbd%3A0x6eef67664c7e6c43!2sShirur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1690000000000!5m2!1sen!2sin" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- ३. महत्त्वाच्या सेवा (Our Services) -->
+    <!-- Our Services Section -->
     <section class="services-section">
         <div class="container">
-            <h2 class="section-title">OUR SERVICES</h2>
-            <div class="cards-container">
-                <div class="service-card">
-                    <h3>🛠️ Skilled, Semi-Skilled, and Unskilled Workers</h3>
-                    <p>We provide all types of suitable and experienced workers required for your industry or factory.</p>
+            <div class="services-header">
+                <div class="services-title-left">
+                    <p class="small-heading">— OUR SERVICES</p>
+                    <h2>Complete Workforce & Facility Solutions</h2>
+                    <p>From skilled manpower to professional cleaning services, we support businesses across industries with reliable and efficient solutions.</p>
                 </div>
-                <div class="service-card">
-                    <h3>💻Technical and Online Exam Assistants</h3>
-                    <p>Reliable staff for technical tasks and the smooth, accurate management of online examinations.</p>
+                <div class="services-title-right">
+                    <a href="#" class="btn-outline-dark">View All Services <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <div class="service-card">
-                    <h3>🧹Domestic Helpers and Office Staff</h3>
-                    <p>Get verified staff for domestic assistance or the day-to-day operations of your office.</p>
-                </div>
-                <!-- नवीन कार्ड १: Healthcare & Hospital Staff -->
-                <div class="service-card">
-                    <h3>🧑‍⚕️Healthcare & Hospital Staff</h3>
-                    <p>Reliable and trained staff including nursing, paramedical, and support staff for hospitals and clinics.</p>
-                </div>
+            </div>
 
-                <!-- नवीन कार्ड २: Construction & Industrial Worker -->
-                <div class="service-card">
-                    <h3>🏗️Construction & Industrial Worker</h3>
-                    <p>Experienced manpower for construction sites, manufacturing plants, and heavy industries.</p>
+            <div class="cards-grid">
+                <!-- Card 1 -->
+                <div class="service-card-new">
+                    <img src="ser1.png" alt="Manpower Supply" class="service-img">
+                    <div class="service-card-content">
+                        <h3>Manpower Supply</h3>
+                        <p>Skilled, Semi-Skilled & Unskilled Workers for Manufacturing, Construction, Warehousing & More.</p>
+                        <a href="#" class="know-more">Know More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
                 </div>
-
-                <!-- नवीन कार्ड ३: Warehouse & Logistics Staff -->
-                <div class="service-card">
-                    <h3>📦Warehouse & Logistics Staff</h3>
-                    <p>Efficient staff for inventory management, packing, loading, unloading, and overall warehouse operations.</p>
+                <!-- Card 2 -->
+                <div class="service-card-new">
+                    <img src="ser2.png" alt="Deep Cleaning" class="service-img">
+                    <div class="service-card-content">
+                        <h3>Deep Cleaning & Acid Wash</h3>
+                        <p>Flats, Bungalows, Commercial Buildings, Post-Construction Cleaning.</p>
+                        <a href="#" class="know-more">Know More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="service-card-new">
+                    <img src="ser3.png" alt="Industrial Cleaning" class="service-img">
+                    <div class="service-card-content">
+                        <h3>Industrial Cleaning</h3>
+                        <p>Warehouse Cleaning, Factory Cleaning, Tank Cleaning, Tiles Re-grouting.</p>
+                        <a href="#" class="know-more">Know More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="service-card-new">
+                    <img src="ser4.png" alt="Facility Management" class="service-img">
+                    <div class="service-card-content">
+                        <h3>Housekeeping & Facility Management</h3>
+                        <p>Office, Society, Commercial & Hospitality Housekeeping.</p>
+                        <a href="#" class="know-more">Know More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ४. वैशिष्ट्ये (Why Choose Us?) -->
-    <section class="why-us-section">
-        <div class="container">
-            <h2 class="section-title" style="color: white;">Why Choose Us?</h2>
-            <ul class="features-list">
-                <li>✔️  Verified and Reliable Workers</li>
-                <li>✔️ Fast Service and Quick Response</li>
-                <li>✔️ Transparent and Affordable Rates</li>
-            </ul>
+    <!-- Why Choose Us & Stats Section -->
+    <section class="why-us-stats-section">
+        <div class="container flex-split">
+            <div class="why-us-left">
+                <h2>Why Choose Apex?</h2>
+                <div class="why-features">
+                    <div class="w-feat"><i class="fa-solid fa-shield-halved"></i> Reliable Workforce</div>
+                    <div class="w-feat"><i class="fa-solid fa-user-check"></i> Trained & Verified Staff</div>
+                    <div class="w-feat"><i class="fa-solid fa-indian-rupee-sign"></i> Cost Effective Solutions</div>
+                    <div class="w-feat"><i class="fa-solid fa-headset"></i> Dedicated Support</div>
+                </div>
+            </div>
+            <div class="stats-right">
+                <div class="stat-box">
+                    <h2>500+</h2>
+                    <p>Workers Deployed</p>
+                </div>
+                <div class="stat-box">
+                    <h2>50+</h2>
+                    <p>Projects Completed</p>
+                </div>
+                <div class="stat-box">
+                    <h2>30+</h2>
+                    <p>Satisfied Clients</p>
+                </div>
+                <div class="stat-box">
+                    <h2>3+</h2>
+                    <p>Years of Experience</p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- ५. त्वरित संपर्क (Quick Contact) -->
-    <section class="contact-section">
+    <!-- Our Projects Section -->
+    <section class="projects-banner">
         <div class="container">
-            <h2 class="section-title">Quick Contact</h2>
-            <p>If you need workers or would like to register for work, contact us today.:</p>
-            <div class="contact-numbers">
-                <p>📞 <strong>8698588681</strong> | <strong>8999974287</strong></p> | <strong>8010461355</strong></div>
-            <!-- WhatsApp बटन -->
-            <a href="https://wa.me/918999974287" target="_blank" class="whatsapp-btn">💬 WhatsApp Message</a>
+            <h2>Our Projects</h2>
+            <p>Delivering manpower and cleaning solutions across residential, commercial and industrial sites.</p>
+            <a href="#" class="btn-primary">View Our Projects <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </section>
 
-    <!-- ६. फूटर (Footer) -->
+    <!-- Footer -->
     <footer class="footer">
         <p>&copy; 2026 APEX WORKFORCE SOLUTION. All Rights Reserved.</p>
         <div class="social-links">
-    <a href="terms.html">Terms & Conditions</a> | <a href="privacy.html">Privacy Policy</a> | <a href="refund.html">Refund Policy</a>
-</div>
+            <a href="terms.html">Terms & Conditions</a> | <a href="privacy.html">Privacy Policy</a> | <a href="refund.html">Refund Policy</a>
+        </div>
     </footer>
-    <!-- Google Translate Script -->
-<script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en', /* तुमच्या वेबसाईटची मूळ भाषा इंग्रजी आहे */
-            includedLanguages: 'mr,hi,en', /* फक्त मराठी, हिंदी आणि इंग्रजीचे पर्याय दाखवण्यासाठी. (सर्व भाषा हव्या असल्यास ही ओळ काढून टाका) */
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-    }
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>

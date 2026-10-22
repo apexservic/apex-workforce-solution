@@ -836,6 +836,21 @@
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
         }
+        // ५. कामगाराला फॉर्म भरल्यावर SMS पाठवणारे फंक्शन (No-CORS Method)
+        async function sendRegistrationSMS(mobile, name, regNo) {
+            let smsText = `Hello ${name}, Your registration for APEX WORKFORCE SOLUTION is SUCCESSFUL. Your Reg. No is ${regNo}. Welcome! - APEX`;
+            let apiKey = "F5I0OKntM1sX6WR8oQJ9PkSVmvBigGlfpde2yhEwqYANHaDLCxQbwlJdn67gIvUO5iVDr8L2WTZXyB0S"; 
+            
+            let url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=q&message=${encodeURIComponent(smsText)}&language=english&flash=0&numbers=${mobile}`;
+
+            try {
+                // no-cors मुळे ब्राउझर ब्लॉक करत नाही आणि await मुळे मेसेज जाईपर्यंत पेज थांबते (फक्त १-२ सेकंद)
+                await fetch(url, { method: 'GET', mode: 'no-cors' });
+                console.log("SMS Request Sent Successfully.");
+            } catch (error) {
+                console.error("SMS Error:", error);
+            }
+        }
         // ६. फॉर्म सबमिट झाल्यावर थेट Firebase मध्ये डेटा सेव्ह करणे
         let smartForm = document.getElementById('smartWorkerForm');
 
@@ -909,6 +924,9 @@
 
                     workerData.regNo = "AP" + String(nextNum).padStart(5, '0');
                     await db.collection("workers").add(workerData);
+
+                    // ---> नवीन: डेटा सेव्ह झाल्यावर लगेच SMS पाठवणे <---
+                    await sendRegistrationSMS(workerData.mobileNumber, workerData.firstName, workerData.regNo);
 
                     // ४. सक्सेस मेसेज आणि रिसेट
                     alert("✅ Registration Successful!\nYour data and documents have been securely saved.");
